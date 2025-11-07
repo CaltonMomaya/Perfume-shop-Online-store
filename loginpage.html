@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | One Stop Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --info: #3498db;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* Floating Background Elements */
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: -5s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 50%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 70%;
+            animation-delay: -7s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        /* Login Container */
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: -1;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #f1c40f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-header p {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .role-btn.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .role-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* Login Form */
+        .login-form {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .login-form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* OTP Input */
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+        }
+
+        .otp-input:focus {
+            border-color: #f39c12;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #f39c12, #e74c3c);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .form-links {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .form-link:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        /* Info Message */
+        .info-message {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .info-message i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid rgba(39, 174, 96, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success-message i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #27ae60;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 2rem;
+            }
+            
+            .role-selection {
+                flex-direction: column;
+            }
+            
+            .otp-input {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-header">
+            <h1>OneStopShop</h1>
+            <p>Access your admin dashboard</p>
+        </div>
+
+        <!-- Role Selection (Default View) -->
+        <div class="role-selection" id="role-selection">
+            <button class="role-btn active" data-role="admin">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin</span>
+            </button>
+            <button class="role-btn" data-role="super-admin">
+                <i class="fas fa-crown"></i>
+                <span>Super Admin</span>
+            </button>
+        </div>
+
+        <!-- Admin Login Form -->
+        <div class="login-form" id="admin-login">
+            <form id="admin-form">
+                <div class="form-group">
+                    <label for="admin-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="admin-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login as Admin
+                </button>
+            </form>
+            <div class="form-links">
+                <a href="#" class="form-link" id="create-admin-link">
+                    <i class="fas fa-user-plus"></i> Create Admin Account
+                </a>
+                <a href="#" class="form-link" id="reset-admin-password">
+                    <i class="fas fa-key"></i> Reset Your Password
+                </a>
+            </div>
+            <a href="#" class="back-btn" id="back-from-admin">
+                <i class="fas fa-arrow-left"></i> Back to Role Selection
+            </a>
+        </div>
+
+        <!-- Super Admin Login Form -->
+        <div class="login-form" id="super-admin-login">
+            <form id="super-admin-form">
+                <div class="form-group">
+                    <label for="super-admin-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="super-admin-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="super-admin-password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login as Super Admin
+                </button>
+            </form>
+            <div class="form-links">
+                <a href="#" class="form-link" id="create-super-admin-link">
+                    <i class="fas fa-user-plus"></i> Create Super Admin Account
+                </a>
+                <a href="#" class="form-link" id="reset-super-admin-password">
+                    <i class="fas fa-key"></i> Reset Your Password
+                </a>
+            </div>
+            <a href="#" class="back-btn" id="back-from-super-admin">
+                <i class="fas fa-arrow-left"></i> Back to Role Selection
+            </a>
+        </div>
+
+        <!-- Admin Account Creation Form -->
+        <div class="login-form" id="admin-create">
+            <form id="admin-create-form">
+                <div class="form-group">
+                    <label for="admin-create-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="admin-create-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="admin-create-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-create-password" class="form-control" placeholder="Create a password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="admin-create-confirm">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-create-confirm" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-user-plus"></i> Create Admin Account
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-admin-create">
+                <i class="fas fa-arrow-left"></i> Back to Admin Login
+            </a>
+        </div>
+
+        <!-- Super Admin Account Creation Form -->
+        <div class="login-form" id="super-admin-create">
+            <form id="super-admin-create-form">
+                <div class="form-group">
+                    <label for="super-admin-create-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="super-admin-create-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-create-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="super-admin-create-password" class="form-control" placeholder="Create a password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-create-confirm">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="super-admin-create-confirm" class="form-control" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-user-plus"></i> Create Super Admin Account
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-super-admin-create">
+                <i class="fas fa-arrow-left"></i> Back to Super Admin Login
+            </a>
+        </div>
+
+        <!-- Admin Password Reset - Step 1: Email Entry -->
+        <div class="login-form" id="admin-reset-email">
+            <form id="admin-reset-email-form">
+                <div class="info-message">
+                    <i class="fas fa-key"></i>
+                    <p>Enter your email address to receive a password reset OTP</p>
+                </div>
+                <div class="form-group">
+                    <label for="admin-reset-email-input">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="admin-reset-email-input" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-admin-reset-email">
+                <i class="fas fa-arrow-left"></i> Back to Admin Login
+            </a>
+        </div>
+
+        <!-- Super Admin Password Reset - Step 1: Email Entry -->
+        <div class="login-form" id="super-admin-reset-email">
+            <form id="super-admin-reset-email-form">
+                <div class="info-message">
+                    <i class="fas fa-key"></i>
+                    <p>Enter your email address to receive a password reset OTP</p>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-reset-email-input">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="super-admin-reset-email-input" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-super-admin-reset-email">
+                <i class="fas fa-arrow-left"></i> Back to Super Admin Login
+            </a>
+        </div>
+
+        <!-- Admin Password Reset - Step 2: OTP and New Password -->
+        <div class="login-form" id="admin-reset-otp">
+            <form id="admin-reset-otp-form">
+                <div class="info-message">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Enter the OTP sent to your email and set your new password</p>
+                </div>
+                <div class="form-group">
+                    <label for="admin-reset-otp-input">OTP Code</label>
+                    <div class="otp-container">
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-1" required>
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-2" required>
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-3" required>
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-4" required>
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-5" required>
+                        <input type="text" maxlength="1" class="otp-input" id="admin-otp-6" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="admin-reset-new-password">New Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-reset-new-password" class="form-control" placeholder="Enter new password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="admin-reset-confirm-password">Confirm New Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-reset-confirm-password" class="form-control" placeholder="Confirm new password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-check-circle"></i> Reset Password
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-admin-reset-otp">
+                <i class="fas fa-arrow-left"></i> Back to Email Entry
+            </a>
+        </div>
+
+        <!-- Super Admin Password Reset - Step 2: OTP and New Password -->
+        <div class="login-form" id="super-admin-reset-otp">
+            <form id="super-admin-reset-otp-form">
+                <div class="info-message">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>Enter the OTP sent to your email and set your new password</p>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-reset-otp-input">OTP Code</label>
+                    <div class="otp-container">
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-1" required>
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-2" required>
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-3" required>
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-4" required>
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-5" required>
+                        <input type="text" maxlength="1" class="otp-input" id="super-admin-otp-6" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-reset-new-password">New Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="super-admin-reset-new-password" class="form-control" placeholder="Enter new password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="super-admin-reset-confirm-password">Confirm New Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="super-admin-reset-confirm-password" class="form-control" placeholder="Confirm new password" required>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-check-circle"></i> Reset Password
+                </button>
+            </form>
+            <a href="#" class="back-btn" id="back-from-super-admin-reset-otp">
+                <i class="fas fa-arrow-left"></i> Back to Email Entry
+            </a>
+        </div>
+
+        <!-- Success Message (Shown after account creation or password reset) -->
+        <div class="login-form" id="success-message">
+            <div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <h3 id="success-title">Success!</h3>
+                <p id="success-message-text">Your action was completed successfully.</p>
+            </div>
+            <a href="#" class="back-btn" id="back-from-success">
+                <i class="fas fa-arrow-left"></i> Back to Login
+            </a>
+        </div>
+
+        <div class="login-footer">
+            <p>&copy; 2025 OneStopShop. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const roleSelection = document.getElementById('role-selection');
+        const roleButtons = document.querySelectorAll('.role-btn');
+        
+        // Forms
+        const adminLoginForm = document.getElementById('admin-login');
+        const superAdminLoginForm = document.getElementById('super-admin-login');
+        const adminCreateForm = document.getElementById('admin-create');
+        const superAdminCreateForm = document.getElementById('super-admin-create');
+        const adminResetEmailForm = document.getElementById('admin-reset-email');
+        const superAdminResetEmailForm = document.getElementById('super-admin-reset-email');
+        const adminResetOtpForm = document.getElementById('admin-reset-otp');
+        const superAdminResetOtpForm = document.getElementById('super-admin-reset-otp');
+        const successMessage = document.getElementById('success-message');
+        
+        // Success message elements
+        const successTitle = document.getElementById('success-title');
+        const successMessageText = document.getElementById('success-message-text');
+
+        // Initialize - Show role selection by default
+        showRoleSelection();
+
+        // Role Selection
+        roleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const role = button.getAttribute('data-role');
+                
+                // Update active button
+                roleButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show appropriate form
+                if (role === 'admin') {
+                    showAdminLogin();
+                } else {
+                    showSuperAdminLogin();
+                }
+            });
+        });
+
+        // Navigation functions
+        function showRoleSelection() {
+            hideAllForms();
+            roleSelection.style.display = 'flex';
+        }
+
+        function showAdminLogin() {
+            hideAllForms();
+            adminLoginForm.classList.add('active');
+        }
+
+        function showSuperAdminLogin() {
+            hideAllForms();
+            superAdminLoginForm.classList.add('active');
+        }
+
+        function showAdminCreate() {
+            hideAllForms();
+            adminCreateForm.classList.add('active');
+        }
+
+        function showSuperAdminCreate() {
+            hideAllForms();
+            superAdminCreateForm.classList.add('active');
+        }
+
+        function showAdminResetEmail() {
+            hideAllForms();
+            adminResetEmailForm.classList.add('active');
+        }
+
+        function showSuperAdminResetEmail() {
+            hideAllForms();
+            superAdminResetEmailForm.classList.add('active');
+        }
+
+        function showAdminResetOtp() {
+            hideAllForms();
+            adminResetOtpForm.classList.add('active');
+        }
+
+        function showSuperAdminResetOtp() {
+            hideAllForms();
+            superAdminResetOtpForm.classList.add('active');
+        }
+
+        function showSuccessMessage(title, message) {
+            hideAllForms();
+            successTitle.textContent = title;
+            successMessageText.textContent = message;
+            successMessage.classList.add('active');
+        }
+
+        function hideAllForms() {
+            roleSelection.style.display = 'none';
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+        }
+
+        // Back buttons
+        document.getElementById('back-from-admin').addEventListener('click', (e) => {
+            e.preventDefault();
+            showRoleSelection();
+        });
+
+        document.getElementById('back-from-super-admin').addEventListener('click', (e) => {
+            e.preventDefault();
+            showRoleSelection();
+        });
+
+        document.getElementById('back-from-admin-create').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminLogin();
+        });
+
+        document.getElementById('back-from-super-admin-create').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSuperAdminLogin();
+        });
+
+        document.getElementById('back-from-admin-reset-email').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminLogin();
+        });
+
+        document.getElementById('back-from-super-admin-reset-email').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSuperAdminLogin();
+        });
+
+        document.getElementById('back-from-admin-reset-otp').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminResetEmail();
+        });
+
+        document.getElementById('back-from-super-admin-reset-otp').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSuperAdminResetEmail();
+        });
+
+        document.getElementById('back-from-success').addEventListener('click', (e) => {
+            e.preventDefault();
+            showRoleSelection();
+        });
+
+        // Create account links
+        document.getElementById('create-admin-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminCreate();
+        });
+
+        document.getElementById('create-super-admin-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSuperAdminCreate();
+        });
+
+        // Reset password links
+        document.getElementById('reset-admin-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            showAdminResetEmail();
+        });
+
+        document.getElementById('reset-super-admin-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            showSuperAdminResetEmail();
+        });
+
+        // Form submissions
+        document.getElementById('admin-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            console.log('Admin Login:', { email, password });
+            alert('Admin login functionality would be implemented here');
+        });
+
+        document.getElementById('super-admin-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('super-admin-email').value;
+            const password = document.getElementById('super-admin-password').value;
+            
+            console.log('Super Admin Login:', { email, password });
+            alert('Super Admin login functionality would be implemented here');
+        });
+
+        document.getElementById('admin-create-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-create-email').value;
+            const password = document.getElementById('admin-create-password').value;
+            const confirmPassword = document.getElementById('admin-create-confirm').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            console.log('Admin Account Created:', { email, password });
+            showSuccessMessage('Account Created Successfully!', 'Your admin account has been created. You can now login with your credentials.');
+        });
+
+        document.getElementById('super-admin-create-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('super-admin-create-email').value;
+            const password = document.getElementById('super-admin-create-password').value;
+            const confirmPassword = document.getElementById('super-admin-create-confirm').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            console.log('Super Admin Account Created:', { email, password });
+            showSuccessMessage('Account Created Successfully!', 'Your super admin account has been created. You can now login with your credentials.');
+        });
+
+        // Password Reset - Step 1: Email Entry
+        document.getElementById('admin-reset-email-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-reset-email-input').value;
+            
+            console.log('Admin Password Reset Request:', { email });
+            // In a real app, you would send OTP to email
+            showAdminResetOtp();
+        });
+
+        document.getElementById('super-admin-reset-email-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('super-admin-reset-email-input').value;
+            
+            console.log('Super Admin Password Reset Request:', { email });
+            // In a real app, you would send OTP to email
+            showSuperAdminResetOtp();
+        });
+
+        // Password Reset - Step 2: OTP and New Password
+        document.getElementById('admin-reset-otp-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get OTP values
+            const otp1 = document.getElementById('admin-otp-1').value;
+            const otp2 = document.getElementById('admin-otp-2').value;
+            const otp3 = document.getElementById('admin-otp-3').value;
+            const otp4 = document.getElementById('admin-otp-4').value;
+            const otp5 = document.getElementById('admin-otp-5').value;
+            const otp6 = document.getElementById('admin-otp-6').value;
+            const otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
+            
+            const newPassword = document.getElementById('admin-reset-new-password').value;
+            const confirmPassword = document.getElementById('admin-reset-confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            console.log('Admin Password Reset:', { otp, newPassword });
+            showSuccessMessage('Password Reset Successfully!', 'Your admin password has been reset. You can now login with your new password.');
+        });
+
+        document.getElementById('super-admin-reset-otp-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get OTP values
+            const otp1 = document.getElementById('super-admin-otp-1').value;
+            const otp2 = document.getElementById('super-admin-otp-2').value;
+            const otp3 = document.getElementById('super-admin-otp-3').value;
+            const otp4 = document.getElementById('super-admin-otp-4').value;
+            const otp5 = document.getElementById('super-admin-otp-5').value;
+            const otp6 = document.getElementById('super-admin-otp-6').value;
+            const otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6;
+            
+            const newPassword = document.getElementById('super-admin-reset-new-password').value;
+            const confirmPassword = document.getElementById('super-admin-reset-confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            console.log('Super Admin Password Reset:', { otp, newPassword });
+            showSuccessMessage('Password Reset Successfully!', 'Your super admin password has been reset. You can now login with your new password.');
+        });
+
+        // OTP input auto-focus functionality
+        function setupOtpInputs() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && index > 0 && e.target.value === '') {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        // Initialize OTP inputs
+        setupOtpInputs();
+
+        // Add some visual effects to inputs on focus
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
