@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfume Shop - Sales Tracker</title>
+    <!-- Chart.js (required for charts) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #8a6d3b;
+            --secondary: #f9f2e8;
+            --accent: #c9a87a;
+            --light: #ffffff;
+            --dark: #333333;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--light);
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+        
+        h1 {
+            font-size: clamp(1.8rem, 4vw, 2.2rem);
+            font-weight: 300;
+        }
+        
+        .date-display {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        main {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .stats {
+                width: 100%;
+                margin-top: 15px;
+            }
+        }
+        
+        .card {
+            background: var(--light);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--secondary);
+            font-weight: 400;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 1rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(201, 168, 122, 0.2);
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background: var(--accent);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+        
+        .stat-card {
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            font-weight: bold;
+            color: var(--primary);
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-top: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--secondary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: auto;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-state p {
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* Smart Search Styles */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            padding-right: 40px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .search-result-item:hover {
+            background-color: var(--secondary);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-name {
+            font-weight: 500;
+        }
+        
+        .product-brand {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .search-highlight {
+            background-color: #fffacd;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+        
+        .product-category {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        /* Stock Status Styles */
+        .stock-status {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .stock-high {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .stock-limited {
+            background-color: #ffa500;
+            color: white;
+        }
+        
+        .stock-low {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .stock-out {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        /* Product Badge Styles */
+        .product-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        
+        .badge-new {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .badge-featured {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        /* Option Group Styles */
+        optgroup {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        optgroup option {
+            font-weight: normal;
+            padding: 8px 12px;
+        }
+
+        /* Product Info in Dropdown */
+        .product-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+        }
+        
+        .product-main-info {
+            flex: 1;
+        }
+        
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .product-price-dropdown {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .product-stock {
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+        
+        /* Analytics Section */
+        #analytics {
+            margin-top: 16px;
+        }
+        
+        #analytics h2 {
+            margin-bottom: 15px;
+        }
+        
+        #analytics > div:first-child {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        #exportCsvBtn {
+            padding: 8px 12px;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        #analytics > div:nth-child(2) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 1024px) {
+            #analytics > div:nth-child(2) {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        #analytics h4 {
+            margin: 8px 0 6px;
+            font-size: 1.1rem;
+        }
+        
+        #lowStockAlerts {
+            margin-top: 12px;
+        }
+        
+        /* Responsive table */
+        @media (max-width: 768px) {
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            th, td {
+                padding: 10px 12px;
+            }
+        }
+        
+        /* Improved responsive behavior for small screens */
+        @media (max-width: 480px) {
+            .card {
+                padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            input, select {
+                padding: 10px 12px;
+            }
+            
+            button {
+                padding: 10px 15px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                    <div>
+                        <h1>OneStopShop</h1>
+                        <div class="date-display" id="currentDate"></div>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSales">0</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalRevenue">KES 0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="topSeller">-</div>
+                        <div class="stat-label">Top Seller</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <section class="left-column">
+                <div class="card">
+                    <h2>Record New Sale</h2>
+                    <form id="saleForm">
+                        <div class="form-group">
+                            <label for="productSearch">Search Perfume</label>
+                            <div class="search-container">
+                                <input type="text" id="productSearch" class="search-input" placeholder="Type to search perfumes..." autocomplete="off">
+                                <div class="search-icon">🔍</div>
+                                <div class="search-results" id="searchResults"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productName">Product Name</label>
+                            <select id="productName" required>
+                                <option value="">Loading products...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price">Price (KES)</label>
+                            <input type="number" id="price" min="0" step="0.01" placeholder="Enter price" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="seller">Sold By</label>
+                            <select id="seller" required>
+                                <option value="">Select a seller</option>
+                                <option value="Abiola">Abiola</option>
+                                <option value="Debby">Debby</option>
+                                <option value="Nicannor">Nicannor</option>
+                                <option value="Rita">Rita</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit">Record Sale</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h2>Quick Stats</h2>
+                    <div id="sellerStats">
+                        <!-- Seller stats will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+            
+            <section class="right-column">
+                <div class="card">
+                    <h2>Recent Sales</h2>
+                    <div id="salesTableContainer">
+                        <table id="salesTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Seller</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTableBody">
+                                <!-- Sales data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                        <!-- Analytics + Export + Low-stock -->
+                        <div id="analytics" class="card" style="margin-top:16px;">
+                            <h2>Sales Analytics</h2>
+
+                            <div style="margin-bottom:12px; display:flex; gap:12px; align-items:center;">
+                                <button id="exportCsvBtn" style="padding:8px 12px; cursor:pointer;">Export Sales CSV</button>
+                                <a href="superadmin.html" style="margin-left:8px;">Open Admin Dashboard</a>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                                <div>
+                                    <h4 style="margin:8px 0 6px;">Revenue (timeline)</h4>
+                                    <canvas id="revenueLineChart" height="200"></canvas>
+                                </div>
+
+                                <div>
+                                    <h4 style="margin:8px 0 6px;">Seller Performance</h4>
+                                    <canvas id="sellerPieChart" height="200"></canvas>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <h4 style="margin:8px 0 6px;">Daily Revenue</h4>
+                                    <canvas id="dailyBarChart" height="150"></canvas>
+                                </div>
+                            </div>
+
+                            <div id="lowStockAlerts" style="margin-top:12px;"></div>
+                        </div>
+
+                        <div id="emptyState" class="empty-state">
+                            <div style="font-size: 3rem;">📊</div>
+                            <p>No sales recorded yet.</p>
+                            <p>Start by recording your first sale using the form.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Luxe Perfume Boutique Sales Tracker &copy; 2023</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript remains exactly the same -->
+    <script type="module">
+/* ===================== FIREBASE & CHARTS: Shop-Sell Page ===================== */
+/* Make sure you removed any old firebase v8 script tags first. */
+/* Assumes Chart.js loaded globally via CDN script in head. */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  runTransaction,
+  serverTimestamp,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+/* ------------------ config ------------------ */
+const firebaseConfig = {
+  apiKey: "AIzaSyD3VgNQ_w0A5NEiFrEqBbCgbkH1uK_2qcM",
+  authDomain: "one-stop-shop-676f9.firebaseapp.com",
+  projectId: "one-stop-shop-676f9",
+  storageBucket: "one-stop-shop-676f9.firebasestorage.app",
+  messagingSenderId: "105516341313",
+  appId: "1:105516341313:web:0e907ea8ec17852a72cec0",
+  measurementId: "G-QGBQW3Z61Q"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* ------------------ DOM ------------------ */
+const productNameSelect = document.getElementById("productName");
+const saleForm = document.getElementById("saleForm");
+const searchInput = document.getElementById("productSearch");
+const searchResults = document.getElementById("searchResults");
+const salesTableBody = document.getElementById("salesTableBody");
+const emptyState = document.getElementById("emptyState");
+
+const totalSalesElement = document.getElementById("totalSales");
+const totalRevenueElement = document.getElementById("totalRevenue");
+const topSellerElement = document.getElementById("topSeller");
+const sellerStatsElement = document.getElementById("sellerStats");
+const currentDateElement = document.getElementById("currentDate");
+
+const exportCsvBtn = document.getElementById("exportCsvBtn");
+const lowStockAlerts = document.getElementById("lowStockAlerts");
+
+/* Chart canvas elements */
+const revenueLineCanvas = document.getElementById("revenueLineChart");
+const dailyBarCanvas = document.getElementById("dailyBarChart");
+const sellerPieCanvas = document.getElementById("sellerPieChart");
+
+/* ------------------ In-memory stores ------------------ */
+let perfumeDatabase = []; // products from firestore
+let sales = [];           // sales from firestore (latest-first)
+
+/* ------------------ Helpers ------------------ */
+function formatCurrency(amount) {
+  if (amount == null || isNaN(amount)) return "KES 0";
+  return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(Number(amount));
+}
+
+function getStockStatus(stock) {
+  if (stock === 0) return { cls: 'stock-out', text: 'Out of Stock' };
+  if (stock <= 5) return { cls: 'stock-low', text: 'Low Stock' };
+  if (stock < 10) return { cls: 'stock-limited', text: 'Limited Stock' };
+  return { cls: 'stock-high', text: 'In Stock' };
+}
+
+/* ------------------ Charts setup ------------------ */
+let revenueLineChart = null;
+let dailyBarChart = null;
+let sellerPieChart = null;
+
+function createOrUpdateLineChart(labels, values) {
+  const data = {
+    labels,
+    datasets: [{ label: 'Revenue', data: values, fill: true, tension: 0.2 }]
+  };
+
+  if (!revenueLineChart) {
+    revenueLineChart = new Chart(revenueLineCanvas.getContext('2d'), {
+      type: 'line',
+      data,
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+  } else {
+    revenueLineChart.data = data;
+    revenueLineChart.update();
+  }
+}
+
+function createOrUpdateDailyBar(labels, values) {
+  const data = { labels, datasets: [{ label: 'Daily Revenue', data: values }] };
+
+  if (!dailyBarChart) {
+    dailyBarChart = new Chart(dailyBarCanvas.getContext('2d'), {
+      type: 'bar',
+      data,
+      options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+  } else {
+    dailyBarChart.data = data;
+    dailyBarChart.update();
+  }
+}
+
+function createOrUpdateSellerPie(labels, values) {
+  const data = { labels, datasets: [{ data: values }] };
+
+  if (!sellerPieChart) {
+    sellerPieChart = new Chart(sellerPieCanvas.getContext('2d'), {
+      type: 'pie',
+      data,
+      options: { responsive: true }
+    });
+  } else {
+    sellerPieChart.data = data;
+    sellerPieChart.update();
+  }
+}
+
+/* ------------------ Populate dropdown ------------------ */
+function populateProductDropdown() {
+  productNameSelect.innerHTML = '<option value="">Select a product</option>';
+  if (!perfumeDatabase.length) {
+    productNameSelect.innerHTML = '<option value="">No products available</option>';
+    return;
+  }
+
+  // sort new arrivals first, featured next, then by name
+  const sorted = perfumeDatabase.slice().sort((a, b) => {
+    if (a.type === 'new-arrival' && b.type !== 'new-arrival') return -1;
+    if (a.type !== 'new-arrival' && b.type === 'new-arrival') return 1;
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  // optgroup for new arrivals
+  const newArr = sorted.filter(p => p.type === 'new-arrival');
+  const coll = sorted.filter(p => p.type !== 'new-arrival');
+
+  if (newArr.length) {
+    const optg = document.createElement('optgroup');
+    optg.label = '🆕 NEW ARRIVALS';
+    newArr.forEach(p => {
+      const option = document.createElement('option');
+      option.value = p.id;
+      option.textContent = `${p.name} — KES ${p.price}`;
+      option.dataset.price = p.price;
+      option.dataset.stock = p.stock;
+      optg.appendChild(option);
+    });
+    productNameSelect.appendChild(optg);
+  }
+
+  if (coll.length) {
+    const optg2 = document.createElement('optgroup');
+    optg2.label = '📦 OUR COLLECTION';
+    coll.forEach(p => {
+      const option = document.createElement('option');
+      option.value = p.id;
+      option.textContent = `${p.name} — KES ${p.price}`;
+      option.dataset.price = p.price;
+      option.dataset.stock = p.stock;
+      optg2.appendChild(option);
+    });
+    productNameSelect.appendChild(optg2);
+  }
+}
+
+/* ------------------ Low-stock alerts ------------------ */
+function refreshLowStockAlerts() {
+  const low = perfumeDatabase.filter(p => p.stock <= 5 && p.stock > 0);
+  const out = perfumeDatabase.filter(p => p.stock === 0);
+
+  let html = '';
+
+  if (low.length) {
+    html += `<div style="padding:8px; background:#fff3cd; border-radius:6px; margin-bottom:8px;">
+      <strong>Low stock:</strong> ${low.map(p => `${p.name} (${p.stock})`).join(', ')}
+    </div>`;
+  }
+  if (out.length) {
+    html += `<div style="padding:8px; background:#f8d7da; border-radius:6px;">
+      <strong>Out of stock:</strong> ${out.map(p => p.name).join(', ')}
+    </div>`;
+  }
+
+  lowStockAlerts.innerHTML = html;
+}
+
+/* ------------------ Sales UI ------------------ */
+function renderSalesTable() {
+  if (!sales.length) {
+    salesTableBody.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+  salesTableBody.innerHTML = sales.map((s, idx) => `
+    <tr>
+      <td>${s.createdAtStr || s.date || ''}</td>
+      <td>${s.productName}</td>
+      <td>${formatCurrency(Number(s.price || 0))}</td>
+      <td>${s.seller}</td>
+      <td><button class="delete-btn" data-id="${s.id}">Delete</button></td>
+    </tr>
+  `).join('');
+
+  // attach delete handlers
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async (ev) => {
+      const id = btn.getAttribute('data-id');
+      if (!id) return;
+      if (!confirm('Delete this sale from Firestore?')) return;
+      try {
+        await deleteDoc(doc(db, 'sales', id));
+      } catch (err) {
+        console.error('Delete sale failed', err);
+        alert('Failed to delete sale (see console).');
+      }
+    });
+  });
+}
+
+/* ------------------ Statistics & Charts Data ------------------ */
+function updateStatsAndCharts() {
+  // total sales & revenue
+  totalSalesElement.textContent = sales.length;
+  const totalRevenue = sales.reduce((sum, s) => sum + Number(s.price || 0), 0);
+  totalRevenueElement.textContent = formatCurrency(totalRevenue);
+
+  // top seller
+  const counts = {};
+  sales.forEach(s => counts[s.seller] = (counts[s.seller] || 0) + 1);
+  let top = '-'; let max = 0;
+  for (const k in counts) if (counts[k] > max) { max = counts[k]; top = k; }
+  topSellerElement.textContent = top;
+
+  // seller pie chart data
+  const sellers = Object.keys(counts);
+  const sellerValues = sellers.map(k => counts[k]);
+  createOrUpdateSellerPie(sellers, sellerValues);
+
+  // revenue timeline: group by date (YYYY-MM-DD) sorted ascending
+  const grouped = {};
+  sales.slice().reverse().forEach(s => {
+    const dt = s.createdAtObj ? s.createdAtObj : (s.createdAtStr ? new Date(s.createdAtStr) : new Date());
+    const key = dt.toISOString().slice(0,10);
+    grouped[key] = (grouped[key] || 0) + Number(s.price || 0);
+  });
+  const labels = Object.keys(grouped).sort();
+  const values = labels.map(l => grouped[l]);
+  createOrUpdateLineChart(labels, values);
+
+  // daily bar (last 14 days)
+  const today = new Date();
+  const arrDates = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    arrDates.push(d.toISOString().slice(0,10));
+  }
+  const dailyValues = arrDates.map(dateKey => grouped[dateKey] || 0);
+  createOrUpdateDailyBar(arrDates, dailyValues);
+
+  // seller stats breakdown UI
+  const sellersList = ['Abiola', 'Debby', 'Nicannor', 'Rita'];
+  let html = '';
+  sellersList.forEach(name => {
+    const arr = sales.filter(s => s.seller === name);
+    const rev = arr.reduce((sum,x) => sum + Number(x.price||0), 0);
+    html += `<div class="stat-card" style="margin-bottom:12px;">
+      <div style="font-weight:bold; color:var(--primary)">${name}</div>
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <span>Sales: ${arr.length}</span>
+        <span>Revenue: ${formatCurrency(rev)}</span>
+      </div>
+    </div>`;
+  });
+  sellerStatsElement.innerHTML = html;
+
+  // low stock alerts
+  refreshLowStockAlerts();
+}
+
+/* ------------------ Real-time listeners ------------------ */
+function startRealtimeListeners() {
+  // products
+  const productsRef = collection(db, 'products');
+  onSnapshot(productsRef, (snap) => {
+    perfumeDatabase = [];
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      perfumeDatabase.push({
+        id: docSnap.id,
+        name: d.name || 'Unnamed',
+        category: d.category || '',
+        price: Number(d.price || 0),
+        description: d.description || '',
+        stock: Number(d.stock || 0),
+        type: d.type || 'collection',
+        featured: !!d.featured,
+        isNew: !!d.isNew,
+        image: d.image || ''
+      });
+    });
+    populateProductDropdown();
+    refreshLowStockAlerts();
+    console.log('Products listener updated', perfumeDatabase.length);
+  }, (err) => console.error('Products listener error', err));
+
+  // sales (newest first)
+  const salesRef = query(collection(db, 'sales'), orderBy('createdAt', 'desc'));
+  onSnapshot(salesRef, (snap) => {
+    sales = [];
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const createdAtObj = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null;
+      sales.push({
+        id: docSnap.id,
+        productId: d.productId || '',
+        productName: d.productName || '',
+        price: Number(d.price || 0),
+        seller: d.seller || '',
+        createdAtObj,
+        createdAtStr: createdAtObj ? createdAtObj.toLocaleString('en-KE') : (d.date || '')
+      });
+    });
+    renderSalesTable();
+    updateStatsAndCharts();
+    console.log('Sales listener updated', sales.length);
+  }, (err) => console.error('Sales listener error', err));
+}
+
+/* ------------------ Record sale with stock decrement (transaction) ------------------ */
+saleForm.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+
+  const productId = productNameSelect.value;
+  if (!productId) {
+    alert('Please select a product');
+    return;
+  }
+  const selected = perfumeDatabase.find(p => p.id === productId);
+  if (!selected) {
+    alert('Selected product not found');
+    return;
+  }
+  const seller = document.getElementById('seller').value || 'Unknown';
+  const priceInput = document.getElementById('price').value;
+  const price = priceInput ? Number(priceInput) : Number(selected.price || 0);
+
+  try {
+    // transaction: ensure stock > 0 (unless you want to allow selling with zero stock after confirm)
+    await runTransaction(db, async (t) => {
+      const prodRef = doc(db, 'products', productId);
+      const prodSnap = await t.get(prodRef);
+      if (!prodSnap.exists()) throw new Error('Product no longer exists');
+
+      const currentStock = Number(prodSnap.data().stock || 0);
+      if (currentStock <= 0) {
+        // allow only if user confirms
+        if (!confirm('Product stock is 0. Record sale anyway?')) throw 'abort';
+      }
+      // decrement stock by 1 if stock > 0
+      if (currentStock > 0) {
+        t.update(prodRef, { stock: currentStock - 1 });
+      }
+
+      // create sale doc
+      const saleRef = collection(db, 'sales');
+      t.set(doc(saleRef), { // using auto-id via doc(collection) without id param
+        productId,
+        productName: selected.name,
+        price,
+        seller,
+        createdAt: serverTimestamp()
+      });
+    });
+
+    // success
+    saleForm.reset();
+    alert('Sale recorded (and stock updated).');
+  } catch (err) {
+    if (err === 'abort') return;
+    console.error('Transaction failed', err);
+    alert('Failed to record sale. Check console.');
+  }
+});
+
+/* ------------------ Price auto-fill on dropdown change ------------------ */
+productNameSelect.addEventListener('change', () => {
+  const id = productNameSelect.value;
+  const p = perfumeDatabase.find(x => x.id === id);
+  if (p) {
+    document.getElementById('price').value = p.price;
+  } else {
+    document.getElementById('price').value = '';
+  }
+});
+
+/* ------------------ Search interactions ------------------ */
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const res = perfumeDatabase.filter(p => p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q));
+  if (!res.length) {
+    searchResults.innerHTML = '<div class="search-result-item">No perfumes found</div>';
+    searchResults.style.display = 'block'; return;
+  }
+  searchResults.innerHTML = res.map(p => `
+    <div class="search-result-item" data-id="${p.id}">
+      <div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-brand">${p.category}</div>
+      </div>
+      <div class="product-details">
+        <div class="product-price">${formatCurrency(p.price)}</div>
+        <div class="product-stock ${getStockStatus(p.stock).cls}">${p.stock} units</div>
+      </div>
+    </div>
+  `).join('');
+  searchResults.style.display = 'block';
+});
+searchResults.addEventListener('click', (e) => {
+  const item = e.target.closest('.search-result-item');
+  if (!item) return;
+  const id = item.getAttribute('data-id');
+  const p = perfumeDatabase.find(x => x.id === id);
+  if (!p) return;
+  productNameSelect.value = id;
+  document.getElementById('price').value = p.price;
+  searchResults.style.display = 'none';
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-container')) searchResults.style.display = 'none';
+});
+
+/* ------------------ Export CSV ------------------ */
+function exportSalesToCSV() {
+  if (!sales.length) { alert('No sales to export'); return; }
+  const header = ['Date','Product','Price','Seller'];
+  const rows = sales.map(s => [s.createdAtStr || s.date || '', s.productName, s.price, s.seller]);
+  const csv = [header, ...rows].map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sales_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+exportCsvBtn.addEventListener('click', exportSalesToCSV);
+
+/* ------------------ Init ------------------ */
+function setCurrentDate() {
+  const now = new Date();
+  currentDateElement.textContent = now.toLocaleDateString('en-KE', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+function init() {
+  setCurrentDate();
+  startRealtimeListeners();
+}
+init();
+
+    </script>
+
+    <!-- Load Firebase SDK -->
+
+</html>

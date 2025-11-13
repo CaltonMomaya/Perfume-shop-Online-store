@@ -1,0 +1,100 @@
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #f8fafc;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* FULL PAGE CENTERING */
+.center-wrapper {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Button container */
+.dashboard-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 350px;
+}
+
+/* Button style */
+.dashboard-btn {
+    display: block;
+    padding: 18px 25px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    background: white;
+    color: #222;
+    border-radius: 18px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 
+        0 8px 20px rgba(0,0,0,0.08),
+        0 4px 12px rgba(0,0,0,0.05);
+    transition: 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-6px);
+    box-shadow: 
+        0 12px 28px rgba(0,0,0,0.12),
+        0 6px 18px rgba(0,0,0,0.08);
+}
+
+.dashboard-btn:active {
+    transform: scale(0.97);
+}
+
+/* Glow sweep animation */
+.dashboard-btn::before {
+    content: "";
+    position: absolute;
+    width: 170%;
+    height: 170%;
+    top: -150%;
+    left: -40%;
+    background: linear-gradient(45deg, #00b4d8, #90e0ef, #0096c7);
+    opacity: 0.18;
+    transition: 0.5s;
+    transform: rotate(25deg);
+}
+
+.dashboard-btn:hover::before {
+    top: -20%;
+}
+
+.dashboard-btn span {
+    position: relative;
+    z-index: 10;
+}
+</style>
+
+<div class="center-wrapper">
+    <div class="dashboard-buttons">
+
+        <!-- UPDATED: Opens superadmin.html -->
+        <button class="dashboard-btn" onclick="openFeature('superadmin.html')">
+            <span>Shop Dashboard</span>
+        </button>
+
+        <!-- You can change this any time -->
+        <button class="dashboard-btn" onclick="openFeature('store-dashboard.html')">
+            <span>Online Store Dashboard</span>
+        </button>
+    </div>
+</div>
+
+<script>
+function openFeature(page) {
+    window.location.href = page;
+}
+</script>
