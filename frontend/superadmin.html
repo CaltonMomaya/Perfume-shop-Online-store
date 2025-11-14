@@ -123,6 +123,7 @@
         .user-info {
             display: flex;
             align-items: center;
+            position: relative;
         }
 
         .user-info img {
@@ -130,6 +131,40 @@
             height: 40px;
             border-radius: 50%;
             margin-right: 0.8rem;
+        }
+
+        .user-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .user-dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .user-dropdown-content a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .user-dropdown:hover .user-dropdown-content {
+            display: block;
         }
 
         /* Tabs */
@@ -193,10 +228,13 @@
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: var(--primary);
             margin-bottom: 0.5rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
         }
 
         .stat-label {
@@ -352,6 +390,196 @@
             background-color: #2980b9;
         }
 
+        /* Toggle Button */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+        }
+
+        .toggle-btn {
+            display: flex;
+            align-items: center;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn i {
+            margin-right: 0.5rem;
+        }
+
+        .toggle-btn:hover {
+            background-color: #e67e22;
+        }
+
+        /* Store Dashboard Styles */
+        .store-dashboard {
+            display: none;
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .store-header h1 {
+            color: var(--primary);
+        }
+
+        .store-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .store-stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .store-stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .store-stat-icon.orders {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        .store-stat-icon.revenue {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .store-stat-icon.customers {
+            background-color: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+
+        .store-stat-icon.products {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        .store-stat-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .store-stat-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .store-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .store-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .store-orders {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-products {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-orders h2, .store-products h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item, .product-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-item:last-child, .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-info, .product-info {
+            flex: 1;
+        }
+
+        .order-info h4, .product-info h4 {
+            margin-bottom: 0.3rem;
+        }
+
+        .order-info p, .product-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f39c12;
+        }
+
+        .status-completed {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-processing {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         /* Alert */
         .alert {
             padding: 1rem;
@@ -370,6 +598,34 @@
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+
+        /* Stock Status */
+        .stock-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .stock-high {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .stock-limited {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f39c12;
+        }
+
+        .stock-low {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .stock-out {
+            background-color: rgba(149, 165, 166, 0.2);
+            color: #95a5a6;
         }
 
         /* Mobile Styles */
@@ -408,6 +664,20 @@
                 border-left: none;
                 border-bottom: 4px solid var(--accent);
             }
+
+            .dashboard-header, .store-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                margin-top: 1rem;
+            }
+
+            .toggle-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -425,6 +695,27 @@
                 text-align: center;
                 min-width: 120px;
             }
+        }
+        
+        /* Reset Notification */
+        .reset-notification {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .reset-timer {
+            font-weight: 600;
+            background-color: #f39c12;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -447,13 +738,41 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="dashboard-header">
-                <h1>Sales Analytics & Reports</h1>
-                <div class="user-info">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
-                    <div>
-                        <p>Admin User</p>
-                        <small>Administrator</small>
+                <div>
+                    <h1>F3 Shop Dashboard</h1>
+                    <div class="toggle-container">
+                        <button class="toggle-btn" id="dashboardToggle">
+                            <i class="fas fa-store"></i> Switch to Website Dashboard
+                        </button>
                     </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-dropdown">
+                        <div style="display: flex; align-items: center;">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
+                            <div>
+                                <p>Admin User</p>
+                                <small>Administrator</small>
+                            </div>
+                            <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem;"></i>
+                        </div>
+                        <div class="user-dropdown-content">
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset Notification -->
+            <div class="reset-notification" id="resetNotification">
+                <div>
+                    <i class="fas fa-clock"></i> Dashboard data will reset in: 
+                    <span class="reset-timer" id="resetTimer">24:00:00</span>
+                </div>
+                <div>
+                    <button class="btn btn-sm" id="resetNowBtn" style="background-color: var(--warning);">
+                        <i class="fas fa-sync-alt"></i> Reset Now
+                    </button>
                 </div>
             </div>
 
@@ -467,14 +786,14 @@
 
             <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="overview">Overview</div>
-                <div class="tab" data-tab="sales">Sales Reports</div>
+                <div class="tab" data-tab="overview">Overview</div>
+                <div class="tab active" data-tab="sales">Sales Reports</div>
                 <div class="tab" data-tab="products">Product Analytics</div>
                 <div class="tab" data-tab="sellers">Seller Performance</div>
             </div>
 
             <!-- Overview Tab -->
-            <div class="tab-content active" id="overview">
+            <div class="tab-content" id="overview">
                 <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -491,7 +810,11 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="topSeller">-</div>
-                        <div class="stat-label">Top Seller</div>
+                        <div class="stat-label">Daily Top Seller</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="monthlyTopSeller">-</div>
+                        <div class="stat-label">Monthly Top Seller</div>
                     </div>
                 </div>
 
@@ -537,17 +860,17 @@
             </div>
 
             <!-- Sales Reports Tab -->
-            <div class="tab-content" id="sales">
+            <div class="tab-content active" id="sales">
                 <div class="card">
                     <h2>Sales Reports</h2>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="reportDateFrom">From Date</label>
-                            <input type="date" id="reportDateFrom" class="form-control">
+                            <input type="date" id="reportDateFrom" class="form-control" value="<?php echo date('Y-m-d', strtotime('-7 days')); ?>">
                         </div>
                         <div class="form-group">
                             <label for="reportDateTo">To Date</label>
-                            <input type="date" id="reportDateTo" class="form-control">
+                            <input type="date" id="reportDateTo" class="form-control" value="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <div class="form-group">
                             <label>&nbsp;</label>
@@ -565,6 +888,7 @@
                                     <th>Product</th>
                                     <th>Price</th>
                                     <th>Seller</th>
+                                    <th>Category</th>
                                 </tr>
                             </thead>
                             <tbody id="salesReportBody">
@@ -668,6 +992,91 @@
                 </div>
             </div>
         </div>
+
+        <!-- Store Dashboard -->
+        <div class="store-dashboard" id="storeDashboard">
+            <div class="store-header">
+                <div>
+                    <h1>Online Store Dashboard</h1>
+                    <div class="toggle-container">
+                        <button class="toggle-btn" id="storeDashboardToggle">
+                            <i class="fas fa-chart-bar"></i> Switch to shop Dashboard
+                        </button>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-dropdown">
+                        <div style="display: flex; align-items: center;">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
+                            <div>
+                                <p>Admin User</p>
+                                <small>Store Manager</small>
+                            </div>
+                            <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem;"></i>
+                        </div>
+                        <div class="user-dropdown-content">
+                            <a href="#" id="storeLogoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Stats -->
+            <div class="store-stats">
+                <div class="store-stat-card">
+                    <div class="store-stat-icon orders">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="store-stat-info">
+                        <h3 id="storeTotalOrders">0</h3>
+                        <p>Total Orders</p>
+                    </div>
+                </div>
+                <div class="store-stat-card">
+                    <div class="store-stat-icon revenue">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="store-stat-info">
+                        <h3 id="storeTotalRevenue">KES 0</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                </div>
+                <div class="store-stat-card">
+                    <div class="store-stat-icon customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="store-stat-info">
+                        <h3 id="storeTotalCustomers">0</h3>
+                        <p>Total Customers</p>
+                    </div>
+                </div>
+                <div class="store-stat-card">
+                    <div class="store-stat-icon products">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="store-stat-info">
+                        <h3 id="storeTotalProducts">0</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Content -->
+            <div class="store-content">
+                <div class="store-orders">
+                    <h2>Recent Orders</h2>
+                    <div id="storeOrdersList">
+                        <!-- Orders will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="store-products">
+                    <h2>Popular Products</h2>
+                    <div id="storeProductsList">
+                        <!-- Products will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -706,6 +1115,15 @@
         const errorAlert = document.getElementById('error-alert');
         const generateReportBtn = document.getElementById('generateReportBtn');
         const exportReportBtn = document.getElementById('exportReportBtn');
+        const dashboardToggle = document.getElementById('dashboardToggle');
+        const storeDashboardToggle = document.getElementById('storeDashboardToggle');
+        const mainContent = document.querySelector('.main-content');
+        const storeDashboard = document.getElementById('storeDashboard');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const storeLogoutBtn = document.getElementById('storeLogoutBtn');
+        const resetTimer = document.getElementById('resetTimer');
+        const resetNotification = document.getElementById('resetNotification');
+        const resetNowBtn = document.getElementById('resetNowBtn');
 
         // Chart instances
         let revenueLineChart = null;
@@ -720,12 +1138,112 @@
         // Store sales and products data
         let sales = [];
         let products = [];
+        let currentPeriodSales = []; // For dashboard - only current period data
+        let monthlyTopSellerData = {}; // Store monthly top seller data
+
+        // Reset timer variables
+        let resetInterval;
+        let lastResetTime = localStorage.getItem('lastResetTime');
+        const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
         // Initialize the dashboard
         function initDashboard() {
             setupEventListeners();
             setupTabs();
             setupRealtimeListeners();
+            setupResetTimer();
+            
+            // Set default dates for sales report (last 7 days)
+            const today = new Date();
+            const lastWeek = new Date(today);
+            lastWeek.setDate(today.getDate() - 7);
+            
+            document.getElementById('reportDateFrom').value = lastWeek.toISOString().slice(0, 10);
+            document.getElementById('reportDateTo').value = today.toISOString().slice(0, 10);
+            
+            // Generate initial sales report
+            generateSalesReport(lastWeek.toISOString().slice(0, 10), today.toISOString().slice(0, 10));
+        }
+
+        // Set up the 24-hour reset timer
+        function setupResetTimer() {
+            // Check if we need to reset data
+            const now = Date.now();
+            
+            if (!lastResetTime || now - parseInt(lastResetTime) >= RESET_INTERVAL) {
+                // Reset data
+                resetDashboardData();
+                lastResetTime = now.toString();
+                localStorage.setItem('lastResetTime', lastResetTime);
+            }
+            
+            // Calculate time until next reset
+            const nextResetTime = parseInt(lastResetTime) + RESET_INTERVAL;
+            const timeUntilReset = nextResetTime - now;
+            
+            // Start the countdown timer
+            startResetCountdown(timeUntilReset);
+            
+            // Set up interval to check for reset
+            resetInterval = setInterval(() => {
+                const currentTime = Date.now();
+                if (currentTime - parseInt(lastResetTime) >= RESET_INTERVAL) {
+                    resetDashboardData();
+                    lastResetTime = currentTime.toString();
+                    localStorage.setItem('lastResetTime', lastResetTime);
+                    startResetCountdown(RESET_INTERVAL);
+                }
+            }, 60000); // Check every minute
+        }
+
+        // Start the countdown timer display
+        function startResetCountdown(timeUntilReset) {
+            // Clear any existing interval
+            if (window.resetCountdownInterval) {
+                clearInterval(window.resetCountdownInterval);
+            }
+            
+            // Update the timer immediately
+            updateResetTimerDisplay(timeUntilReset);
+            
+            // Update every second
+            window.resetCountdownInterval = setInterval(() => {
+                timeUntilReset -= 1000;
+                if (timeUntilReset <= 0) {
+                    clearInterval(window.resetCountdownInterval);
+                    resetTimer.textContent = "00:00:00";
+                } else {
+                    updateResetTimerDisplay(timeUntilReset);
+                }
+            }, 1000);
+        }
+
+        // Update the reset timer display
+        function updateResetTimerDisplay(timeUntilReset) {
+            const hours = Math.floor(timeUntilReset / (1000 * 60 * 60));
+            const minutes = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeUntilReset % (1000 * 60)) / 1000);
+            
+            resetTimer.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Reset dashboard data
+        function resetDashboardData() {
+            // Clear current period sales
+            currentPeriodSales = [];
+            
+            // Update dashboard with empty data
+            updateDashboard();
+            
+            // Show notification
+            showAlert(successAlert, 'Dashboard data has been reset for the new period.');
+            
+            // If we're on the overview tab, refresh the view
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab && activeTab.getAttribute('data-tab') === 'overview') {
+                updateDashboard();
+            }
         }
 
         // Set up real-time listeners for sales and products
@@ -736,10 +1254,12 @@
                 onSnapshot(salesQuery, (snapshot) => {
                     console.log("Sales real-time update received in admin panel");
                     sales = [];
+                    currentPeriodSales = []; // Reset current period sales
+                    
                     snapshot.forEach((doc) => {
                         const data = doc.data();
                         const createdAtObj = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null;
-                        sales.push({
+                        const saleData = {
                             id: doc.id,
                             productId: data.productId || '',
                             productName: data.productName || '',
@@ -747,10 +1267,30 @@
                             seller: data.seller || '',
                             createdAtObj,
                             createdAtStr: createdAtObj ? createdAtObj.toLocaleString('en-KE') : (data.date || ''),
-                            dateKey: createdAtObj ? createdAtObj.toISOString().slice(0,10) : ''
-                        });
+                            dateKey: createdAtObj ? createdAtObj.toISOString().slice(0,10) : '',
+                            category: data.category || ''
+                        };
+                        
+                        sales.push(saleData);
+                        
+                        // Add to current period sales if it's after the last reset
+                        if (createdAtObj && createdAtObj.getTime() > parseInt(lastResetTime)) {
+                            currentPeriodSales.push(saleData);
+                        }
+                        
+                        // Update monthly top seller data
+                        updateMonthlyTopSeller(saleData);
                     });
+                    
                     updateDashboard();
+                    updateStoreDashboard();
+                    
+                    // Update sales report with new data
+                    const fromDate = document.getElementById('reportDateFrom').value;
+                    const toDate = document.getElementById('reportDateTo').value;
+                    if (fromDate && toDate) {
+                        generateSalesReport(fromDate, toDate);
+                    }
                 });
 
                 // Products listener
@@ -773,10 +1313,65 @@
                         });
                     });
                     updateDashboard();
+                    updateStoreDashboard();
                 });
             } catch (error) {
                 console.error("Error setting up real-time listeners:", error);
                 showAlert(errorAlert, 'Error connecting to database. Please check your connection.');
+            }
+        }
+
+        // Update monthly top seller data
+        function updateMonthlyTopSeller(saleData) {
+            if (!saleData.createdAtObj || !saleData.seller) return;
+            
+            const saleMonth = saleData.createdAtObj.getMonth();
+            const saleYear = saleData.createdAtObj.getFullYear();
+            const monthKey = `${saleYear}-${saleMonth}`;
+            
+            // Initialize month data if not exists
+            if (!monthlyTopSellerData[monthKey]) {
+                monthlyTopSellerData[monthKey] = {};
+            }
+            
+            // Update seller count for the month
+            if (!monthlyTopSellerData[monthKey][saleData.seller]) {
+                monthlyTopSellerData[monthKey][saleData.seller] = 0;
+            }
+            
+            monthlyTopSellerData[monthKey][saleData.seller]++;
+            
+            // Save to localStorage
+            localStorage.setItem('monthlyTopSellerData', JSON.stringify(monthlyTopSellerData));
+        }
+
+        // Get current monthly top seller
+        function getCurrentMonthlyTopSeller() {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            const currentMonthKey = `${currentYear}-${currentMonth}`;
+            
+            if (!monthlyTopSellerData[currentMonthKey]) return '-';
+            
+            let topSeller = '-';
+            let maxSales = 0;
+            
+            for (const seller in monthlyTopSellerData[currentMonthKey]) {
+                if (monthlyTopSellerData[currentMonthKey][seller] > maxSales) {
+                    maxSales = monthlyTopSellerData[currentMonthKey][seller];
+                    topSeller = seller;
+                }
+            }
+            
+            return topSeller;
+        }
+
+        // Load monthly top seller data from localStorage
+        function loadMonthlyTopSellerData() {
+            const storedData = localStorage.getItem('monthlyTopSellerData');
+            if (storedData) {
+                monthlyTopSellerData = JSON.parse(storedData);
             }
         }
 
@@ -789,22 +1384,110 @@
             updateSellerPerformance();
         }
 
+        // Update store dashboard
+        function updateStoreDashboard() {
+            // Update store stats with current period data only
+            document.getElementById('storeTotalOrders').textContent = currentPeriodSales.length;
+            
+            const totalRevenue = currentPeriodSales.reduce((sum, sale) => sum + sale.price, 0);
+            document.getElementById('storeTotalRevenue').textContent = formatCurrency(totalRevenue);
+            
+            // Calculate unique customers (simplified - in a real app, you'd track customers separately)
+            const uniqueCustomers = new Set(currentPeriodSales.map(sale => sale.seller)).size;
+            document.getElementById('storeTotalCustomers').textContent = uniqueCustomers;
+            
+            document.getElementById('storeTotalProducts').textContent = products.length;
+            
+            // Update recent orders
+            updateStoreOrders();
+            
+            // Update popular products
+            updateStoreProducts();
+        }
+
+        // Update store orders
+        function updateStoreOrders() {
+            const storeOrdersList = document.getElementById('storeOrdersList');
+            const recentSales = currentPeriodSales.slice(0, 5); // Show last 5 sales from current period
+            
+            if (recentSales.length === 0) {
+                storeOrdersList.innerHTML = '<p style="text-align: center; padding: 2rem;">No recent orders</p>';
+                return;
+            }
+            
+            storeOrdersList.innerHTML = recentSales.map(sale => {
+                // Generate random status for demo purposes
+                const statuses = ['pending', 'processing', 'completed'];
+                const status = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                return `
+                    <div class="order-item">
+                        <div class="order-info">
+                            <h4>${sale.productName}</h4>
+                            <p>Order #${sale.id.substring(0, 8)} • ${sale.createdAtStr || sale.date || ''}</p>
+                        </div>
+                        <div class="order-status status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update store products
+        function updateStoreProducts() {
+            const storeProductsList = document.getElementById('storeProductsList');
+            
+            // Get top 5 products by sales count from current period
+            const productCounts = {};
+            currentPeriodSales.forEach(sale => {
+                productCounts[sale.productName] = (productCounts[sale.productName] || 0) + 1;
+            });
+            
+            const topProducts = Object.entries(productCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(item => {
+                    const product = products.find(p => p.name === item[0]) || { price: 0 };
+                    return {
+                        name: item[0],
+                        sales: item[1],
+                        price: product.price
+                    };
+                });
+            
+            if (topProducts.length === 0) {
+                storeProductsList.innerHTML = '<p style="text-align: center; padding: 2rem;">No product data available</p>';
+                return;
+            }
+            
+            storeProductsList.innerHTML = topProducts.map(product => {
+                return `
+                    <div class="product-item">
+                        <div class="product-info">
+                            <h4>${product.name}</h4>
+                            <p>${product.sales} sales</p>
+                        </div>
+                        <div class="product-price">${formatCurrency(product.price)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // Update statistics
         function updateStats() {
-            // Total sales
-            document.getElementById('totalSales').textContent = sales.length;
+            // Total sales (current period only)
+            document.getElementById('totalSales').textContent = currentPeriodSales.length;
 
-            // Total revenue
-            const totalRevenue = sales.reduce((sum, sale) => sum + sale.price, 0);
+            // Total revenue (current period only)
+            const totalRevenue = currentPeriodSales.reduce((sum, sale) => sum + sale.price, 0);
             document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
 
-            // Average sale
-            const avgSale = sales.length > 0 ? totalRevenue / sales.length : 0;
+            // Average sale (current period only)
+            const avgSale = currentPeriodSales.length > 0 ? totalRevenue / currentPeriodSales.length : 0;
             document.getElementById('avgSale').textContent = formatCurrency(avgSale);
 
-            // Top seller
+            // Daily Top seller (current period only)
             const sellerCounts = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 sellerCounts[sale.seller] = (sellerCounts[sale.seller] || 0) + 1;
             });
             let topSeller = '-';
@@ -816,9 +1499,12 @@
                 }
             }
             document.getElementById('topSeller').textContent = topSeller;
+            
+            // Monthly Top seller
+            document.getElementById('monthlyTopSeller').textContent = getCurrentMonthlyTopSeller();
         }
 
-        // Update charts
+        // Update charts (current period only)
         function updateCharts() {
             updateRevenueLineChart();
             updateSellerPieChart();
@@ -830,11 +1516,11 @@
             updateSellerSalesChart();
         }
 
-        // Revenue timeline chart
+        // Revenue timeline chart (current period only)
         function updateRevenueLineChart() {
-            // Group sales by date
+            // Group sales by date (current period only)
             const grouped = {};
-            sales.slice().reverse().forEach(sale => {
+            currentPeriodSales.slice().reverse().forEach(sale => {
                 const key = sale.dateKey || (sale.createdAtObj ? sale.createdAtObj.toISOString().slice(0,10) : '');
                 if (key) {
                     grouped[key] = (grouped[key] || 0) + sale.price;
@@ -876,10 +1562,10 @@
             }
         }
 
-        // Seller pie chart
+        // Seller pie chart (current period only)
         function updateSellerPieChart() {
             const sellerCounts = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 sellerCounts[sale.seller] = (sellerCounts[sale.seller] || 0) + 1;
             });
             
@@ -914,7 +1600,7 @@
             }
         }
 
-        // Daily bar chart
+        // Daily bar chart (current period only)
         function updateDailyBarChart() {
             // Last 7 days
             const today = new Date();
@@ -926,7 +1612,7 @@
             }
             
             const dailyRevenue = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 const key = sale.dateKey || (sale.createdAtObj ? sale.createdAtObj.toISOString().slice(0,10) : '');
                 if (key) {
                     dailyRevenue[key] = (dailyRevenue[key] || 0) + sale.price;
@@ -964,10 +1650,10 @@
             }
         }
 
-        // Product bar chart
+        // Product bar chart (current period only)
         function updateProductBarChart() {
             const productCounts = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 productCounts[sale.productName] = (productCounts[sale.productName] || 0) + 1;
             });
             
@@ -1008,10 +1694,10 @@
             }
         }
 
-        // Top products chart
+        // Top products chart (current period only)
         function updateTopProductsChart() {
             const productRevenue = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 productRevenue[sale.productName] = (productRevenue[sale.productName] || 0) + sale.price;
             });
             
@@ -1052,10 +1738,10 @@
             }
         }
 
-        // Category chart
+        // Category chart (current period only)
         function updateCategoryChart() {
             const categoryCounts = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 const product = products.find(p => p.id === sale.productId);
                 if (product) {
                     categoryCounts[product.category] = (categoryCounts[product.category] || 0) + 1;
@@ -1095,10 +1781,10 @@
             }
         }
 
-        // Seller revenue chart
+        // Seller revenue chart (current period only)
         function updateSellerRevenueChart() {
             const sellerRevenue = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 sellerRevenue[sale.seller] = (sellerRevenue[sale.seller] || 0) + sale.price;
             });
             
@@ -1134,10 +1820,10 @@
             }
         }
 
-        // Seller sales chart
+        // Seller sales chart (current period only)
         function updateSellerSalesChart() {
             const sellerCounts = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 sellerCounts[sale.seller] = (sellerCounts[sale.seller] || 0) + 1;
             });
             
@@ -1173,10 +1859,10 @@
             }
         }
 
-        // Update recent sales table
+        // Update recent sales table (current period only)
         function updateRecentSales() {
             const recentSalesBody = document.getElementById('recentSalesBody');
-            const recentSales = sales.slice(0, 10); // Show last 10 sales
+            const recentSales = currentPeriodSales.slice(0, 10); // Show last 10 sales from current period
             
             if (recentSales.length === 0) {
                 recentSalesBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">No recent sales</td></tr>';
@@ -1193,13 +1879,13 @@
             `).join('');
         }
 
-        // Update product performance table
+        // Update product performance table (current period only)
         function updateProductPerformance() {
             const productPerformanceBody = document.getElementById('productPerformanceBody');
             
-            // Calculate product performance
+            // Calculate product performance (current period only)
             const productStats = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 if (!productStats[sale.productName]) {
                     productStats[sale.productName] = {
                         name: sale.productName,
@@ -1260,13 +1946,13 @@
             }).join('');
         }
 
-        // Update seller performance table and stats
+        // Update seller performance table and stats (current period only)
         function updateSellerPerformance() {
             const sellerPerformanceBody = document.getElementById('sellerPerformanceBody');
             
-            // Calculate seller performance
+            // Calculate seller performance (current period only)
             const sellerStats = {};
-            sales.forEach(sale => {
+            currentPeriodSales.forEach(sale => {
                 if (!sellerStats[sale.seller]) {
                     sellerStats[sale.seller] = {
                         name: sale.seller,
@@ -1312,7 +1998,7 @@
                 `;
             }).join('');
             
-            // Update individual seller stats
+            // Update individual seller stats (current period only)
             const sellers = ['Abiola', 'Debby', 'Nicannor', 'Rita'];
             sellers.forEach(seller => {
                 const sellerData = sellerStats[seller] || { totalSales: 0 };
@@ -1352,9 +2038,58 @@
 
             // Export report button
             exportReportBtn.addEventListener('click', exportSalesReport);
+
+            // Dashboard toggle buttons
+            dashboardToggle.addEventListener('click', toggleDashboard);
+            storeDashboardToggle.addEventListener('click', toggleDashboard);
+
+            // Logout buttons
+            logoutBtn.addEventListener('click', handleLogout);
+            storeLogoutBtn.addEventListener('click', handleLogout);
+            
+            // Reset now button
+            resetNowBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset the dashboard data now? This will clear all current period statistics.')) {
+                    resetDashboardData();
+                    lastResetTime = Date.now().toString();
+                    localStorage.setItem('lastResetTime', lastResetTime);
+                    startResetCountdown(RESET_INTERVAL);
+                }
+            });
         }
 
-        // Generate sales report
+        // Handle logout
+        function handleLogout(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to log out?')) {
+                // Clear intervals
+                if (resetInterval) clearInterval(resetInterval);
+                if (window.resetCountdownInterval) clearInterval(window.resetCountdownInterval);
+                
+                // Redirect to login page or handle logout logic
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Toggle between admin and store dashboard
+        function toggleDashboard() {
+            const isStoreDashboard = storeDashboard.style.display === 'block';
+            
+            if (isStoreDashboard) {
+                // Switch to admin dashboard
+                mainContent.style.display = 'block';
+                storeDashboard.style.display = 'none';
+                dashboardToggle.innerHTML = '<i class="fas fa-store"></i> Switch to Store Dashboard';
+            } else {
+                // Switch to store dashboard
+                mainContent.style.display = 'none';
+                storeDashboard.style.display = 'block';
+                dashboardToggle.innerHTML = '<i class="fas fa-chart-bar"></i> Switch to Admin Dashboard';
+                updateStoreDashboard();
+            }
+        }
+
+        // Generate sales report (uses all historical data)
         function generateSalesReport(fromDate, toDate) {
             const salesReportBody = document.getElementById('salesReportBody');
             
@@ -1364,23 +2099,30 @@
             });
             
             if (filteredSales.length === 0) {
-                salesReportBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">No sales found for the selected date range</td></tr>';
+                salesReportBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No sales found for the selected date range</td></tr>';
                 return;
             }
             
-            salesReportBody.innerHTML = filteredSales.map(sale => `
-                <tr>
-                    <td>${sale.createdAtStr || sale.date || ''}</td>
-                    <td>${sale.productName}</td>
-                    <td>${formatCurrency(sale.price)}</td>
-                    <td>${sale.seller}</td>
-                </tr>
-            `).join('');
+            salesReportBody.innerHTML = filteredSales.map(sale => {
+                // Find product category
+                const product = products.find(p => p.id === sale.productId);
+                const category = product ? product.category : (sale.category || 'Unknown');
+                
+                return `
+                    <tr>
+                        <td>${sale.createdAtStr || sale.date || ''}</td>
+                        <td>${sale.productName}</td>
+                        <td>${formatCurrency(sale.price)}</td>
+                        <td>${sale.seller}</td>
+                        <td>${category}</td>
+                    </tr>
+                `;
+            }).join('');
             
             showAlert(successAlert, `Report generated for ${fromDate} to ${toDate}. Found ${filteredSales.length} sales.`);
         }
 
-        // Export sales report to CSV
+        // Export sales report to CSV (uses all historical data)
         function exportSalesReport() {
             const fromDate = document.getElementById('reportDateFrom').value;
             const toDate = document.getElementById('reportDateTo').value;
@@ -1400,13 +2142,19 @@
                 return;
             }
             
-            const header = ['Date', 'Product', 'Price', 'Seller'];
-            const rows = filteredSales.map(sale => [
-                sale.createdAtStr || sale.date || '', 
-                sale.productName, 
-                sale.price, 
-                sale.seller
-            ]);
+            const header = ['Date', 'Product', 'Price', 'Seller', 'Category'];
+            const rows = filteredSales.map(sale => {
+                const product = products.find(p => p.id === sale.productId);
+                const category = product ? product.category : (sale.category || 'Unknown');
+                
+                return [
+                    sale.createdAtStr || sale.date || '', 
+                    sale.productName, 
+                    sale.price, 
+                    sale.seller,
+                    category
+                ];
+            });
             
             const csv = [header, ...rows].map(row => 
                 row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
@@ -1447,7 +2195,13 @@
         }
 
         // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load monthly top seller data
+            loadMonthlyTopSellerData();
+            
+            // Initialize dashboard
+            initDashboard();
+        });
     </script>
 </body>
 </html>

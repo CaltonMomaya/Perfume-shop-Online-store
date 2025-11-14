@@ -478,6 +478,27 @@
         #lowStockAlerts {
             margin-top: 12px;
         }
+
+        /* Reset Notification Styles */
+        .reset-notification {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .reset-timer {
+            font-weight: 600;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+        }
         
         /* Responsive table */
         @media (max-width: 768px) {
@@ -544,6 +565,14 @@
                 </div>
             </div>
         </header>
+
+        <!-- Reset Notification -->
+        <div class="reset-notification" id="resetNotification">
+            <div>
+                <i class="fas fa-clock"></i> Dashboard data will reset in: 
+                <span class="reset-timer" id="resetTimer">24:00:00</span>
+            </div>
+        </div>
         
         <main>
             <section class="left-column">
@@ -656,7 +685,7 @@
         </footer>
     </div>
 
-    <!-- JavaScript remains exactly the same -->
+    <!-- JavaScript -->
     <script type="module">
 /* ===================== FIREBASE & CHARTS: Shop-Sell Page ===================== */
 /* Make sure you removed any old firebase v8 script tags first. */
@@ -708,6 +737,10 @@ const currentDateElement = document.getElementById("currentDate");
 const exportCsvBtn = document.getElementById("exportCsvBtn");
 const lowStockAlerts = document.getElementById("lowStockAlerts");
 
+/* Reset Timer Elements */
+const resetTimer = document.getElementById("resetTimer");
+const resetNotification = document.getElementById("resetNotification");
+
 /* Chart canvas elements */
 const revenueLineCanvas = document.getElementById("revenueLineChart");
 const dailyBarCanvas = document.getElementById("dailyBarChart");
@@ -716,6 +749,84 @@ const sellerPieCanvas = document.getElementById("sellerPieChart");
 /* ------------------ In-memory stores ------------------ */
 let perfumeDatabase = []; // products from firestore
 let sales = [];           // sales from firestore (latest-first)
+let currentPeriodSales = []; // sales from current 24-hour period
+
+/* ------------------ Reset Timer Variables ------------------ */
+let resetInterval;
+let lastResetTime = localStorage.getItem('lastResetTime');
+const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+/* ------------------ Reset Timer Functions ------------------ */
+function setupResetTimer() {
+    // Check if we need to reset data
+    const now = Date.now();
+    
+    if (!lastResetTime || now - parseInt(lastResetTime) >= RESET_INTERVAL) {
+        // Reset data
+        resetDashboardData();
+        lastResetTime = now.toString();
+        localStorage.setItem('lastResetTime', lastResetTime);
+    }
+    
+    // Calculate time until next reset
+    const nextResetTime = parseInt(lastResetTime) + RESET_INTERVAL;
+    const timeUntilReset = nextResetTime - now;
+    
+    // Start the countdown timer
+    startResetCountdown(timeUntilReset);
+    
+    // Set up interval to check for reset
+    resetInterval = setInterval(() => {
+        const currentTime = Date.now();
+        if (currentTime - parseInt(lastResetTime) >= RESET_INTERVAL) {
+            resetDashboardData();
+            lastResetTime = currentTime.toString();
+            localStorage.setItem('lastResetTime', lastResetTime);
+            startResetCountdown(RESET_INTERVAL);
+        }
+    }, 60000); // Check every minute
+}
+
+function startResetCountdown(timeUntilReset) {
+    // Clear any existing interval
+    if (window.resetCountdownInterval) {
+        clearInterval(window.resetCountdownInterval);
+    }
+    
+    // Update the timer immediately
+    updateResetTimerDisplay(timeUntilReset);
+    
+    // Update every second
+    window.resetCountdownInterval = setInterval(() => {
+        timeUntilReset -= 1000;
+        if (timeUntilReset <= 0) {
+            clearInterval(window.resetCountdownInterval);
+            resetTimer.textContent = "00:00:00";
+        } else {
+            updateResetTimerDisplay(timeUntilReset);
+        }
+    }, 1000);
+}
+
+function updateResetTimerDisplay(timeUntilReset) {
+    const hours = Math.floor(timeUntilReset / (1000 * 60 * 60));
+    const minutes = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeUntilReset % (1000 * 60)) / 1000);
+    
+    resetTimer.textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function resetDashboardData() {
+    // Clear current period sales
+    currentPeriodSales = [];
+    
+    // Update dashboard with empty data
+    updateStatsAndCharts();
+    
+    // Show notification
+    alert('Dashboard data has been reset for the new period.');
+}
 
 /* ------------------ Helpers ------------------ */
 function formatCurrency(amount) {
@@ -859,13 +970,16 @@ function refreshLowStockAlerts() {
 
 /* ------------------ Sales UI ------------------ */
 function renderSalesTable() {
-  if (!sales.length) {
+  // Show only current period sales in the table
+  const displaySales = currentPeriodSales.slice(0, 20); // Show last 20 sales from current period
+  
+  if (!displaySales.length) {
     salesTableBody.innerHTML = '';
     emptyState.style.display = 'block';
     return;
   }
   emptyState.style.display = 'none';
-  salesTableBody.innerHTML = sales.map((s, idx) => `
+  salesTableBody.innerHTML = displaySales.map((s, idx) => `
     <tr>
       <td>${s.createdAtStr || s.date || ''}</td>
       <td>${s.productName}</td>
@@ -893,14 +1007,17 @@ function renderSalesTable() {
 
 /* ------------------ Statistics & Charts Data ------------------ */
 function updateStatsAndCharts() {
+  // Use only current period sales for stats and charts
+  const statsSales = currentPeriodSales;
+
   // total sales & revenue
-  totalSalesElement.textContent = sales.length;
-  const totalRevenue = sales.reduce((sum, s) => sum + Number(s.price || 0), 0);
+  totalSalesElement.textContent = statsSales.length;
+  const totalRevenue = statsSales.reduce((sum, s) => sum + Number(s.price || 0), 0);
   totalRevenueElement.textContent = formatCurrency(totalRevenue);
 
   // top seller
   const counts = {};
-  sales.forEach(s => counts[s.seller] = (counts[s.seller] || 0) + 1);
+  statsSales.forEach(s => counts[s.seller] = (counts[s.seller] || 0) + 1);
   let top = '-'; let max = 0;
   for (const k in counts) if (counts[k] > max) { max = counts[k]; top = k; }
   topSellerElement.textContent = top;
@@ -912,7 +1029,7 @@ function updateStatsAndCharts() {
 
   // revenue timeline: group by date (YYYY-MM-DD) sorted ascending
   const grouped = {};
-  sales.slice().reverse().forEach(s => {
+  statsSales.slice().reverse().forEach(s => {
     const dt = s.createdAtObj ? s.createdAtObj : (s.createdAtStr ? new Date(s.createdAtStr) : new Date());
     const key = dt.toISOString().slice(0,10);
     grouped[key] = (grouped[key] || 0) + Number(s.price || 0);
@@ -936,7 +1053,7 @@ function updateStatsAndCharts() {
   const sellersList = ['Abiola', 'Debby', 'Nicannor', 'Rita'];
   let html = '';
   sellersList.forEach(name => {
-    const arr = sales.filter(s => s.seller === name);
+    const arr = statsSales.filter(s => s.seller === name);
     const rev = arr.reduce((sum,x) => sum + Number(x.price||0), 0);
     html += `<div class="stat-card" style="margin-bottom:12px;">
       <div style="font-weight:bold; color:var(--primary)">${name}</div>
@@ -982,10 +1099,12 @@ function startRealtimeListeners() {
   const salesRef = query(collection(db, 'sales'), orderBy('createdAt', 'desc'));
   onSnapshot(salesRef, (snap) => {
     sales = [];
+    currentPeriodSales = []; // Reset current period sales
+    
     snap.forEach(docSnap => {
       const d = docSnap.data();
       const createdAtObj = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null;
-      sales.push({
+      const saleData = {
         id: docSnap.id,
         productId: d.productId || '',
         productName: d.productName || '',
@@ -993,11 +1112,18 @@ function startRealtimeListeners() {
         seller: d.seller || '',
         createdAtObj,
         createdAtStr: createdAtObj ? createdAtObj.toLocaleString('en-KE') : (d.date || '')
-      });
+      };
+      
+      sales.push(saleData);
+      
+      // Add to current period sales if it's after the last reset
+      if (createdAtObj && createdAtObj.getTime() > parseInt(lastResetTime)) {
+        currentPeriodSales.push(saleData);
+      }
     });
     renderSalesTable();
     updateStatsAndCharts();
-    console.log('Sales listener updated', sales.length);
+    console.log('Sales listener updated', sales.length, 'Current period:', currentPeriodSales.length);
   }, (err) => console.error('Sales listener error', err));
 }
 
@@ -1131,6 +1257,7 @@ function setCurrentDate() {
 
 function init() {
   setCurrentDate();
+  setupResetTimer();
   startRealtimeListeners();
 }
 init();
