@@ -776,17 +776,86 @@
                         </div>
                     </div>
 
-                    <div class="tabs" style="margin-top: 1rem;">
-                        <div class="tab active" data-subtab="all-products">All Products</div>
-                        <div class="tab" data-subtab="new-arrivals">New Arrivals</div>
-                        <div class="tab" data-subtab="collection">Our Collection</div>
-                    </div>
-
                     <div class="products-grid" id="products-list">
                         <!-- Products will be loaded here by JavaScript -->
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal" id="edit-product-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-edit-modal">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-product-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name *</label>
+                        <input type="text" id="edit-product-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-price">Price (KSh) *</label>
+                        <input type="number" id="edit-product-price" class="form-control" min="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-category">Category *</label>
+                        <select id="edit-product-category" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="woody">Woody</option>
+                            <option value="floral">Floral</option>
+                            <option value="fresh">Fresh</option>
+                            <option value="sweet">Sweet</option>
+                            <option value="spicy">Spicy</option>
+                            <option value="citrus">Citrus</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-stock">Stock Quantity *</label>
+                        <input type="number" id="edit-product-stock" class="form-control" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-description">Description *</label>
+                    <textarea id="edit-product-description" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-product-image">Product Image URL *</label>
+                    <input type="text" id="edit-product-image" class="form-control" required>
+                    <small style="color: #666;">Use a direct image URL from Unsplash or similar service</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-type">Product Type *</label>
+                        <select id="edit-product-type" class="form-control" required>
+                            <option value="new-arrival">New Arrival</option>
+                            <option value="collection">Our Collection</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; margin-top: 1.8rem;">
+                            <input type="checkbox" id="edit-product-featured">
+                            Mark as featured product
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-danger" id="cancel-edit">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Update Product
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -819,8 +888,13 @@
         const errorAlert = document.getElementById('error-alert');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
-        const subtabs = document.querySelectorAll('[data-subtab]');
         const searchInput = document.getElementById('search-products');
+        
+        // Edit Modal Elements
+        const editProductModal = document.getElementById('edit-product-modal');
+        const editProductForm = document.getElementById('edit-product-form');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const cancelEdit = document.getElementById('cancel-edit');
 
         // Store products for real-time updates
         let allProducts = [];
@@ -830,8 +904,8 @@
             loadProducts();
             setupEventListeners();
             setupTabs();
-            setupSubTabs();
             setupRealtimeListener();
+            setupModalEvents();
         }
 
         // Set up real-time listener for product updates
@@ -844,6 +918,67 @@
             } catch (error) {
                 console.error("Error setting up real-time listener:", error);
             }
+        }
+
+        // Setup modal events
+        function setupModalEvents() {
+            // Close modal when X is clicked
+            closeEditModal.addEventListener('click', () => {
+                editProductModal.style.display = 'none';
+            });
+
+            // Close modal when cancel button is clicked
+            cancelEdit.addEventListener('click', () => {
+                editProductModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', (e) => {
+                if (e.target === editProductModal) {
+                    editProductModal.style.display = 'none';
+                }
+            });
+
+            // Handle edit form submission
+            editProductForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const productId = document.getElementById('edit-product-id').value;
+                const name = document.getElementById('edit-product-name').value;
+                const price = parseFloat(document.getElementById('edit-product-price').value);
+                const category = document.getElementById('edit-product-category').value;
+                const stock = parseInt(document.getElementById('edit-product-stock').value);
+                const description = document.getElementById('edit-product-description').value;
+                const image = document.getElementById('edit-product-image').value;
+                const type = document.getElementById('edit-product-type').value;
+                const featured = document.getElementById('edit-product-featured').checked;
+                
+                if (!name || !price || !category || !stock || !description || !image) {
+                    showAlert(errorAlert, 'Please fill in all required fields.');
+                    return;
+                }
+                
+                const updatedData = {
+                    name,
+                    price,
+                    category,
+                    stock,
+                    description,
+                    image,
+                    type,
+                    featured,
+                    isNew: type === 'new-arrival'
+                };
+
+                const success = await updateProduct(productId, updatedData);
+                if (success) {
+                    showAlert(successAlert, `Product "${name}" updated successfully!`);
+                    editProductModal.style.display = 'none';
+                    loadProducts(); // Reload to show updated product
+                } else {
+                    showAlert(errorAlert, 'Error updating product. Please try again.');
+                }
+            });
         }
 
         // Load products from Firebase
@@ -903,8 +1038,11 @@
                                         </span>
                                     </div>
                                     <div class="product-actions">
+                                        <button class="btn btn-warning btn-sm edit-product" data-id="${doc.id}">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
                                         <button class="btn btn-info btn-sm edit-stock" data-id="${doc.id}">
-                                            <i class="fas fa-edit"></i> Update Stock
+                                            <i class="fas fa-box"></i> Update Stock
                                         </button>
                                         <button class="btn btn-danger btn-sm delete-product" data-id="${doc.id}">
                                             <i class="fas fa-trash"></i> Delete
@@ -938,6 +1076,17 @@
                         }
                     });
                 });
+
+                // Add event listeners to edit product buttons
+                document.querySelectorAll('.edit-product').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const productId = e.target.closest('.edit-product').getAttribute('data-id');
+                        const product = allProducts.find(p => p.id === productId);
+                        if (product) {
+                            await showEditProductModal(product);
+                        }
+                    });
+                });
                 
             } catch (error) {
                 console.error("Error loading products:", error);
@@ -960,6 +1109,23 @@
             }
         }
 
+        // Show edit product modal
+        async function showEditProductModal(product) {
+            // Populate the form with current product data
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name;
+            document.getElementById('edit-product-price').value = product.price;
+            document.getElementById('edit-product-category').value = product.category;
+            document.getElementById('edit-product-stock').value = product.stock;
+            document.getElementById('edit-product-description').value = product.description;
+            document.getElementById('edit-product-image').value = product.image;
+            document.getElementById('edit-product-type').value = product.type || 'collection';
+            document.getElementById('edit-product-featured').checked = product.featured || false;
+            
+            // Show the modal
+            editProductModal.style.display = 'flex';
+        }
+
         // Update product stock
         async function updateProductStock(productId, newStock) {
             try {
@@ -969,6 +1135,17 @@
                 return true;
             } catch (error) {
                 console.error("Error updating product stock:", error);
+                return false;
+            }
+        }
+
+        // Update product details
+        async function updateProduct(productId, updatedData) {
+            try {
+                await updateDoc(doc(db, "products", productId), updatedData);
+                return true;
+            } catch (error) {
+                console.error("Error updating product:", error);
                 return false;
             }
         }
@@ -1130,46 +1307,6 @@
                         }
                     });
                 });
-            });
-        }
-
-        // Setup subtabs
-        function setupSubTabs() {
-            subtabs.forEach(subtab => {
-                subtab.addEventListener('click', () => {
-                    const subtabId = subtab.getAttribute('data-subtab');
-                    
-                    // Update active subtab
-                    subtabs.forEach(t => t.classList.remove('active'));
-                    subtab.classList.add('active');
-                    
-                    // Filter products based on subtab
-                    filterProductsByType(subtabId);
-                });
-            });
-        }
-
-        // Filter products by type
-        function filterProductsByType(type) {
-            const productCards = document.querySelectorAll('.product-card');
-            
-            productCards.forEach(card => {
-                const badge = card.querySelector('.badge');
-                let productType = 'collection'; // default
-                
-                if (badge) {
-                    if (badge.classList.contains('badge-new')) {
-                        productType = 'new-arrival';
-                    } else if (badge.classList.contains('badge-featured')) {
-                        productType = 'collection'; // featured products are in collection
-                    }
-                }
-                
-                if (type === 'all-products' || productType === type) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
             });
         }
 
