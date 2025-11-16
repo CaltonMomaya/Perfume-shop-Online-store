@@ -1,7 +1,9 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const nodemailer = require("nodemailer");
 require('dotenv').config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +29,15 @@ const MPESA_BASE_URL = MPESA_CONFIG.environment === 'production'
 // Storage
 let orders = [];
 let paymentStatus = {};
+// Nodemailer transporter (Gmail App Password required)
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.OTP_EMAIL_USER,
+        pass: process.env.OTP_EMAIL_PASS
+    }
+});
+
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -105,6 +116,54 @@ async function getMpesaAccessToken() {
         throw new Error('Failed to get M-Pesa access token');
     }
 }
+// ==========================
+// SEND OTP EMAIL
+// ==========================
+app.post("/api/send-otp", async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: "Email is required"
+            });
+        }
+
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000);
+
+        await transporter.sendMail({
+            from: process.env.OTP_EMAIL_USER,
+            to: email,
+            subject: "One Stop Shop Login OTP",
+            html: `
+                <div style="font-family: Arial; padding: 20px;">
+                    <h2>Your OTP Code</h2>
+                    <p>Use the code below to verify your login:</p>
+                    <h1 style="font-size: 40px; letter-spacing: 4px;">${otp}</h1>
+                    <p>This code expires in 10 minutes.</p>
+                </div>
+            `
+        });
+
+        console.log("📧 OTP sent to:", email);
+
+        res.json({
+            success: true,
+            message: "OTP sent successfully",
+            otp  // remove this when live
+        });
+
+    } catch (error) {
+        console.error("Email Error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to send OTP",
+            error: error.message
+        });
+    }
+});
 
 // Create Order
 app.post('/api/orders', async (req, res) => {

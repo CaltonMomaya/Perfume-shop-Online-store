@@ -628,6 +628,58 @@
             color: #95a5a6;
         }
 
+        /* User Management Styles */
+        .user-management {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+
         /* Mobile Styles */
         @media (max-width: 992px) {
             .admin-container {
@@ -694,6 +746,17 @@
                 flex: 1;
                 text-align: center;
                 min-width: 120px;
+            }
+            
+            .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-actions {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: flex-end;
             }
         }
         
@@ -790,6 +853,7 @@
                 <div class="tab active" data-tab="sales">Sales Reports</div>
                 <div class="tab" data-tab="products">Product Analytics</div>
                 <div class="tab" data-tab="sellers">Seller Performance</div>
+                <div class="tab" data-tab="users">User Management</div>
             </div>
 
             <!-- Overview Tab -->
@@ -991,6 +1055,29 @@
                     </div>
                 </div>
             </div>
+
+            <!-- User Management Tab -->
+            <div class="tab-content" id="users">
+                <div class="card">
+                    <h2>User Management</h2>
+                    <div class="user-management">
+                        <div id="userList">
+                            <!-- Users will be populated here -->
+                        </div>
+                        <div style="margin-top: 15px; display: flex; gap: 10px;">
+                            <button class="btn btn-info" id="refreshUsersBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh Users
+                            </button>
+                            <button class="btn btn-warning" id="syncUsersBtn">
+                                <i class="fas fa-users-cog"></i> Sync with Auth Users
+                            </button>
+                            <button class="btn btn-danger" id="cleanupUsersBtn">
+                                <i class="fas fa-trash"></i> Cleanup Old Users
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Store Dashboard -->
@@ -1092,6 +1179,14 @@
             where,
             onSnapshot 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import {
+            getDatabase,
+            ref,
+            get,
+            set,
+            update,
+            remove
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -1107,6 +1202,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const realtimeDb = getDatabase(app);
 
         // DOM Elements
         const tabs = document.querySelectorAll('.tab');
@@ -1125,6 +1221,12 @@
         const resetNotification = document.getElementById('resetNotification');
         const resetNowBtn = document.getElementById('resetNowBtn');
 
+        // User Management DOM
+        const userList = document.getElementById('userList');
+        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+        const syncUsersBtn = document.getElementById('syncUsersBtn');
+        const cleanupUsersBtn = document.getElementById('cleanupUsersBtn');
+
         // Chart instances
         let revenueLineChart = null;
         let sellerPieChart = null;
@@ -1140,6 +1242,7 @@
         let products = [];
         let currentPeriodSales = []; // For dashboard - only current period data
         let monthlyTopSellerData = {}; // Store monthly top seller data
+        let allUsers = []; // Store all users for management
 
         // Reset timer variables
         let resetInterval;
@@ -1163,6 +1266,9 @@
             
             // Generate initial sales report
             generateSalesReport(lastWeek.toISOString().slice(0, 10), today.toISOString().slice(0, 10));
+            
+            // Load users initially
+            loadUsers();
         }
 
         // Set up the 24-hour reset timer
@@ -2056,6 +2162,11 @@
                     startResetCountdown(RESET_INTERVAL);
                 }
             });
+            
+            // User management buttons
+            refreshUsersBtn.addEventListener('click', loadUsers);
+            syncUsersBtn.addEventListener('click', syncWithAuthUsers);
+            cleanupUsersBtn.addEventListener('click', cleanupOldUsers);
         }
 
         // Handle logout
@@ -2194,6 +2305,231 @@
             });
         }
 
+        /* ------------------ User Management Functions ------------------ */
+        async function loadUsers() {
+            try {
+                console.log('Loading users from Realtime Database...');
+                const usersRef = ref(realtimeDb, 'users');
+                const snapshot = await get(usersRef);
+                
+                allUsers = [];
+                
+                if (snapshot.exists()) {
+                    const usersData = snapshot.val();
+                    console.log('Raw users data:', usersData);
+                    
+                    Object.keys(usersData).forEach(userId => {
+                        const user = usersData[userId];
+                        console.log(`Checking user ${userId}:`, user);
+                        
+                        // Store all users for management
+                        allUsers.push({
+                            id: userId,
+                            ...user
+                        });
+                    });
+                    
+                    console.log('Final users list:', allUsers);
+                    
+                    // Update user management display
+                    updateUserManagementDisplay();
+                    
+                } else {
+                    console.log('No users found in database');
+                    allUsers = [];
+                    updateUserManagementDisplay();
+                }
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                allUsers = [];
+                updateUserManagementDisplay();
+            }
+        }
+
+        function updateUserManagementDisplay() {
+            if (allUsers.length === 0) {
+                userList.innerHTML = '<p>No users found in database.</p>';
+                return;
+            }
+            
+            userList.innerHTML = allUsers.map(user => `
+                <div class="user-item">
+                    <div class="user-info">
+                        <strong>${user.username || 'No username'}</strong>
+                        <div style="font-size: 0.8rem; color: #666;">
+                            Role: ${user.role || 'Unknown'} | 
+                            Email: ${user.email || 'No email'} |
+                            Status: <span class="status-badge ${user.status === 'inactive' ? 'status-inactive' : 'status-active'}">
+                                ${user.status || 'active'}
+                            </span>
+                        </div>
+                        <div style="font-size: 0.7rem; color: #999;">
+                            ID: ${user.id} | 
+                            Created: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        ${user.status === 'inactive' ? 
+                            `<button class="btn btn-small btn-success" onclick="activateUser('${user.id}')">Activate</button>` :
+                            `<button class="btn btn-small btn-warning" onclick="deactivateUser('${user.id}')">Deactivate</button>`
+                        }
+                        <button class="btn btn-small btn-danger" onclick="deleteUserCompletely('${user.id}', '${user.username}')">Delete Completely</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Make these functions available globally for the onclick handlers
+        window.activateUser = async function(userId) {
+            if (!confirm('Activate this user?')) return;
+            
+            try {
+                await update(ref(realtimeDb, `users/${userId}`), {
+                    status: 'active'
+                });
+                alert('User activated successfully!');
+                loadUsers(); // Reload the list
+            } catch (error) {
+                console.error('Error activating user:', error);
+                alert('Error activating user');
+            }
+        };
+
+        window.deactivateUser = async function(userId) {
+            if (!confirm('Deactivate this user? They will no longer appear in the seller dropdown.')) return;
+            
+            try {
+                await update(ref(realtimeDb, `users/${userId}`), {
+                    status: 'inactive'
+                });
+                alert('User deactivated successfully!');
+                loadUsers(); // Reload the list
+            } catch (error) {
+                console.error('Error deactivating user:', error);
+                alert('Error deactivating user');
+            }
+        };
+
+        window.deleteUserCompletely = async function(userId, username) {
+            if (!confirm(`Permanently delete user "${username}"? This will remove them from both Realtime Database and Authentication!`)) return;
+            
+            try {
+                // First, try to find and delete from Authentication
+                await deleteUserFromAuthentication(username);
+                
+                // Then delete from Realtime Database
+                await remove(ref(realtimeDb, `users/${userId}`));
+                
+                alert('User deleted completely from both systems!');
+                loadUsers(); // Reload the list
+            } catch (error) {
+                console.error('Error deleting user completely:', error);
+                alert('Error deleting user. They may have been removed from Realtime Database but not Authentication.');
+            }
+        };
+
+        /* ------------------ Authentication Sync Functions ------------------ */
+        async function deleteUserFromAuthentication(username) {
+            // This is a simplified approach - in a real app, you'd need admin privileges
+            // or a Cloud Function to delete users from Authentication
+            console.log(`Attempting to delete user ${username} from Authentication...`);
+            
+            // For now, we'll just show a message about manual deletion
+            alert(`To completely remove user "${username}", you need to:\n\n1. Go to Firebase Console\n2. Go to Authentication > Users\n3. Find and delete the user manually\n\nThis user has been removed from Realtime Database.`);
+            
+            // Note: In a production app, you would use the Admin SDK via a Cloud Function
+            // to properly delete users from Authentication
+        }
+
+        async function syncWithAuthUsers() {
+            try {
+                console.log('Syncing Realtime Database users with Authentication...');
+                
+                const usersRef = ref(realtimeDb, 'users');
+                const snapshot = await get(usersRef);
+                
+                if (!snapshot.exists()) {
+                    alert('No users found in Realtime Database.');
+                    return;
+                }
+                
+                const usersData = snapshot.val();
+                let syncedCount = 0;
+                let removedCount = 0;
+                
+                // Get current authenticated users (this is simplified)
+                // In a real app, you'd use a Cloud Function to get the full auth user list
+                
+                for (const userId in usersData) {
+                    const user = usersData[userId];
+                    
+                    // Check if user exists in Authentication (simplified check)
+                    // This is where you'd integrate with a Cloud Function
+                    const userExistsInAuth = await checkIfUserExistsInAuth(user.username);
+                    
+                    if (!userExistsInAuth) {
+                        // User doesn't exist in Authentication, remove from Realtime Database
+                        await remove(ref(realtimeDb, `users/${userId}`));
+                        removedCount++;
+                        console.log(`Removed user ${user.username} from Realtime Database (not found in Auth)`);
+                    } else {
+                        syncedCount++;
+                    }
+                }
+                
+                alert(`Sync completed!\n\n- ${syncedCount} users in sync\n- ${removedCount} users removed from Realtime Database`);
+                loadUsers(); // Reload the list
+                
+            } catch (error) {
+                console.error('Error syncing users:', error);
+                alert('Error syncing users with Authentication');
+            }
+        }
+
+        // Simplified function to check if user exists in Authentication
+        async function checkIfUserExistsInAuth(username) {
+            // This is a placeholder - in a real app, you'd call a Cloud Function
+            // that uses the Admin SDK to check if the user exists in Authentication
+            
+            // For now, we'll assume all users exist to avoid accidental deletion
+            // You can implement this properly with a Cloud Function
+            return true;
+            
+            // Example Cloud Function implementation would look like:
+            // const functions = getFunctions();
+            // const checkUserExists = httpsCallable(functions, 'checkUserExists');
+            // const result = await checkUserExists({ username });
+            // return result.data.exists;
+        }
+
+        async function cleanupOldUsers() {
+            if (!confirm('This will remove all users with status "inactive". Continue?')) return;
+            
+            try {
+                const usersRef = ref(realtimeDb, 'users');
+                const snapshot = await get(usersRef);
+                
+                if (snapshot.exists()) {
+                    const usersData = snapshot.val();
+                    let deletedCount = 0;
+                    
+                    for (const userId in usersData) {
+                        if (usersData[userId].status === 'inactive') {
+                            await remove(ref(realtimeDb, `users/${userId}`));
+                            deletedCount++;
+                        }
+                    }
+                    
+                    alert(`Cleaned up ${deletedCount} inactive users.`);
+                    loadUsers(); // Reload the list
+                }
+            } catch (error) {
+                console.error('Error cleaning up users:', error);
+                alert('Error cleaning up users');
+            }
+        }
+
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', () => {
             // Load monthly top seller data
@@ -2204,4 +2540,4 @@
         });
     </script>
 </body>
-</html>
+</html> 

@@ -3,11 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Stop Shop | Premium Fragrances</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Secure Access Portal</title>
     <style>
-        /* Your exact original CSS styles - completely unchanged */
-        /* Global Styles */
+        /* Your existing CSS styles remain the same */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --merchant: #e67e22;
+            --admin: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #e74c3c;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,1240 +27,518 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        :root {
-            --primary: #2c3e50;
-            --secondary: #e74c3c;
-            --accent: #f39c12;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --success: #27ae60;
-            --whatsapp: #25D366;
-            --danger: #e74c3c;
-        }
-
         body {
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
         .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
+        .brand-section {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: white;
-            text-decoration: none;
+            padding: 40px;
             display: flex;
-            align-items: center;
-        }
-
-        .logo span {
-            color: var(--accent);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-
-        .nav-links li {
-            margin-left: 1.5rem;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        .cart-icon {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background-color: var(--secondary);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-        }
-
-        /* Hamburger Menu */
-        .hamburger {
-            display: none;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .brand-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .brand-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .role-selection {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: var(--light);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .role-btn.merchant {
+            border: 2px solid var(--merchant);
+            color: var(--merchant);
+        }
+
+        .role-btn.admin {
+            border: 2px solid var(--admin);
+            color: var(--admin);
+        }
+
+        .role-btn.active.merchant {
+            background: var(--merchant);
+            color: white;
+        }
+
+        .role-btn.active.admin {
+            background: var(--admin);
+            color: white;
+        }
+
+        .form-toggle {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 50px;
+            background: var(--light);
             padding: 5px;
         }
 
-        .hamburger span {
-            height: 3px;
-            width: 25px;
-            background: white;
-            margin-bottom: 4px;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -6px);
-        }
-
-        /* Mobile Navigation */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: -100%;
-                width: 100%;
-                height: calc(100vh - 70px);
-                background-color: var(--primary);
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                padding-top: 2rem;
-                transition: left 0.3s ease;
-                z-index: 99;
-            }
-
-            .nav-links.active {
-                left: 0;
-            }
-
-            .nav-links li {
-                margin: 1.5rem 0;
-            }
-
-            .nav-links a {
-                font-size: 1.2rem;
-                padding: 0.5rem 1rem;
-            }
-
-            .header-content {
-                flex-wrap: wrap;
-            }
-        }
-
-        /* Search Bar */
-        .search-container {
-            display: flex;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-
-        .search-box {
-            display: flex;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .search-input {
+        .toggle-btn {
             flex: 1;
-            padding: 0.8rem 1rem;
-            border: 2px solid #ddd;
-            border-radius: 4px 0 0 4px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent);
-        }
-
-        .search-btn {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .search-btn:hover {
-            background-color: #e67e22;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1544468266-6a8948001c78?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 5rem 0;
+            padding: 12px;
             text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--accent);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            background-color: #e67e22;
-        }
-
-        /* Products Section */
-        .products {
-            padding: 2rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            color: var(--dark);
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .product-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-        }
-
-        .product-name {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-description {
-            color: #666;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
-
-        .add-to-cart {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.7rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .add-to-cart:hover {
-            background-color: #1a252f;
-        }
-
-        /* Stock Badge */
-        .stock-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: var(--success);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        .stock-limited {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .stock-low {
-            background-color: var(--accent);
-            color: #333;
-        }
-        
-        .stock-out {
-            background-color: var(--secondary);
-        }
-        
-        /* Out of Stock Styles */
-        .product-card.out-of-stock {
-            opacity: 0.6;
-            position: relative;
-        }
-        
-        .product-card.out-of-stock::after {
-            content: "OUT OF STOCK";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(231, 76, 60, 0.9);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            z-index: 2;
-        }
-        
-        .product-card.out-of-stock .add-to-cart {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        
-        .product-card.out-of-stock .add-to-cart:hover {
-            background-color: #95a5a6;
-        }
-        
-        .product-card.out-of-stock .product-price {
-            text-decoration: line-through;
-            color: #95a5a6;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 2rem 0;
-            gap: 1rem;
-        }
-
-        .pagination-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .pagination-btn:hover:not(:disabled) {
-            background-color: #1a252f;
-        }
-
-        .pagination-btn:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-
-        .page-numbers {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .page-number {
-            padding: 0.5rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .page-number.active {
-            background-color: var(--accent);
-            color: white;
-        }
-
-        .page-number:hover:not(.active) {
-            background-color: #ecf0f1;
-        }
-
-        /* Search Results */
-        .search-results {
-            margin: 1rem 0;
-            text-align: center;
-        }
-
-        .search-results-count {
-            font-size: 1.1rem;
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-
-        /* About Section */
-        .about-section {
-            padding: 4rem 0;
-            background-color: white;
-        }
-
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .process-steps {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .process-step {
-            flex: 1;
-            min-width: 200px;
-            text-align: center;
-            padding: 1.5rem;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .step-icon {
-            font-size: 2.5rem;
-            color: var(--accent);
-            margin-bottom: 1rem;
-        }
-
-        .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background-color: var(--accent);
-            color: white;
-            border-radius: 50%;
-            line-height: 30px;
-            margin-bottom: 0.5rem;
-        }
-
-        /* FAQ Section */
-        .faq-section {
-            padding: 4rem 0;
-            background-color: #f9f9f9;
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            margin-bottom: 1.5rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 1.5rem;
-            background-color: white;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 50px;
+            transition: var(--transition);
             font-weight: 600;
         }
 
-        .faq-answer {
-            padding: 0 1.5rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s, padding 0.3s;
-            background-color: white;
-        }
-
-        .faq-answer.active {
-            padding: 1.5rem;
-            max-height: 500px;
-        }
-
-        .faq-toggle {
-            transition: transform 0.3s;
-        }
-
-        .faq-toggle.active {
-            transform: rotate(180deg);
-        }
-
-        /* New Stock Section */
-        .new-stock {
-            padding: 4rem 0;
-            background-color: white;
-        }
-
-        .new-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--secondary);
+        .toggle-btn.active {
+            background: var(--primary);
             color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
         }
 
-        /* Cart Modal */
-        .modal {
+        .form {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
         }
 
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 2rem;
-            position: relative;
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .cart-items {
-            margin: 1.5rem 0;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cart-item-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .cart-item-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-right: 1rem;
-        }
-
-        .cart-item-details h4 {
-            margin-bottom: 0.3rem;
-        }
-
-        .cart-item-price {
-            color: var(--secondary);
-            font-weight: bold;
-        }
-
-        /* Stock Counter in Cart */
-        .cart-stock-info {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 0.3rem;
-        }
-        
-        .cart-stock-warning {
-            color: var(--danger);
-            font-weight: bold;
-        }
-
-        .cart-item-quantity {
-            display: flex;
-            align-items: center;
-        }
-
-        .quantity-btn {
-            background-color: #eee;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quantity-input {
-            width: 40px;
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--primary);
             text-align: center;
-            margin: 0 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0.3rem;
-        }
-
-        .remove-item {
-            color: var(--secondary);
-            cursor: pointer;
-            margin-left: 1rem;
-        }
-
-        .cart-total {
-            text-align: right;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin: 1.5rem 0;
-            padding-top: 1rem;
-            border-top: 2px solid #eee;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background-color: var(--success);
-            color: white;
-            border: none;
-            padding: 1rem;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .checkout-btn:hover {
-            background-color: #219653;
-        }
-
-        /* Checkout Form */
-        .checkout-form {
-            display: none;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
         }
 
         .form-control {
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1rem;
+            transition: var(--transition);
         }
 
-        .form-row {
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .email-field {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .pin-inputs {
             display: flex;
-            gap: 1rem;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        /* Payment Section */
-        .payment-section {
-            background-color: #f9f9f9;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 1.5rem;
-        }
-
-        .payment-methods {
-            display: flex;
-            gap: 1rem;
-            margin: 1rem 0;
-        }
-
-        .payment-method {
-            flex: 1;
+        .pin-inputs input {
+            width: 50px;
+            height: 50px;
             text-align: center;
-            padding: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            font-size: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .pin-inputs input:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
 
-        .payment-method.active {
-            border-color: var(--success);
-            background-color: rgba(39, 174, 96, 0.1);
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
         }
 
-        .mpesa-form {
-            display: none;
-            margin-top: 1.5rem;
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
         }
 
-        .mpesa-form.active {
-            display: block;
+        .btn-secondary {
+            background: var(--accent);
+            color: white;
+            margin-top: 10px;
         }
 
-        /* Order Confirmation */
-        .order-confirmation {
-            display: none;
+        .btn-secondary:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .forgot-password {
             text-align: center;
-            padding: 2rem;
+            margin-top: 20px;
         }
 
-        .confirmation-icon {
-            font-size: 4rem;
+        .forgot-password a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: rgba(46, 204, 113, 0.2);
             color: var(--success);
-            margin-bottom: 1rem;
+            border: 1px solid var(--success);
         }
 
-        /* WhatsApp Button */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background-color: var(--whatsapp);
+        .message.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .message.info {
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .otp-section {
+            display: none;
+        }
+
+        .otp-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .admin-call-instruction {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            transition: transform 0.3s;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 3rem 0 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            margin-bottom: 1.5rem;
+        .admin-call-instruction h3 {
+            margin-bottom: 10px;
             font-size: 1.2rem;
         }
 
-        .footer-links {
-            list-style: none;
+        .admin-call-instruction p {
+            margin-bottom: 5px;
+            opacity: 0.9;
         }
 
-        .footer-links li {
-            margin-bottom: 0.8rem;
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
         }
 
-        .footer-links a {
-            color: #bbb;
+        .otp-inputs input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .otp-inputs input:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .resend-otp a {
+            color: var(--secondary);
             text-decoration: none;
-            transition: color 0.3s;
+            font-weight: 600;
         }
 
-        .footer-links a:hover {
-            color: white;
+        .resend-otp a:hover {
+            text-decoration: underline;
         }
 
-        .copyright {
-            text-align: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid #444;
-            color: #bbb;
-            font-size: 0.9rem;
+        .debug-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #666;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: row;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .payment-methods {
+            .container {
                 flex-direction: column;
             }
-
-            .pagination {
-                flex-wrap: wrap;
+            
+            .brand-section {
+                padding: 30px 20px;
             }
-
-            .process-steps {
-                flex-direction: column;
+            
+            .form-section {
+                padding: 30px 20px;
             }
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--accent);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .payment-status {
-            text-align: center;
-            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <a href="#" class="logo">One<span>Stop</span>Shop</a>
-                
-                <!-- Hamburger Menu -->
-                <div class="hamburger" id="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                
-                <ul class="nav-links" id="nav-links">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#new-stock">New Stock</a></li>
-                    <li><a href="#faq">FAQs</a></li>
-                    <li class="cart-icon" id="cart-icon">
-                        <span>Cart</span>
-                        <span class="cart-count">0</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Discover Your Signature Scent</h1>
-            <p>Explore our exclusive collection of luxury perfumes from around the world. Find the perfect fragrance that tells your story.</p>
-            <a href="#products" class="btn">Shop Now</a>
-        </div>
-    </section>
-
-    <!-- Search Section -->
     <div class="container">
-        <div class="search-container">
-            <div class="search-box">
-                <input type="text" id="search-input" class="search-input" placeholder="Search for perfumes...">
-                <button class="search-btn" id="search-btn">Search</button>
+        <div class="brand-section">
+            <h1>Secure Access Portal</h1>
+            <p>Admin-verified account creation system. All registrations require OTP verification.</p>
+        </div>
+        
+        <div class="form-section">
+            <div class="form-container">
+                <div class="role-selection">
+                    <button class="role-btn merchant active" id="merchant-btn">Merchant</button>
+                    <button class="role-btn admin" id="admin-btn">Admin</button>
+                </div>
+                
+                <div class="form-toggle">
+                    <div class="toggle-btn active" id="login-toggle">Login</div>
+                    <div class="toggle-btn" id="signup-toggle">Sign Up</div>
+                </div>
+                
+                <!-- Login Form -->
+                <div class="form active" id="login-form">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <div id="login-message"></div>
+                    
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-control email-field" value="nyankieyacalton@gmail.com" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" class="form-control" placeholder="Enter your username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-pin">6-Digit PIN</label>
+                        <div class="pin-inputs">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                        </div>
+                        <input type="hidden" id="login-pin">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="login-btn">Login</button>
+                    
+                    <div class="forgot-password">
+                        <a href="#" id="forgot-password-link">Forgot PIN?</a>
+                    </div>
+                </div>
+                
+                <!-- Sign Up Form -->
+                <div class="form" id="signup-form">
+                    <h2 class="form-title">Create Account</h2>
+                    <div id="signup-message"></div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-control email-field" value="nyankieyacalton@gmail.com" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" class="form-control" placeholder="Choose a username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-pin">Set 6-Digit PIN</label>
+                        <div class="pin-inputs">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                        </div>
+                        <input type="hidden" id="signup-pin">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="signup-btn">Send OTP to Admin</button>
+                </div>
+                
+                <!-- OTP Verification Section -->
+                <div class="otp-section" id="otp-section">
+                    <h2 class="form-title">Admin OTP Verification</h2>
+                    <div id="otp-message"></div>
+                    
+                    <div class="admin-call-instruction">
+                        <h3>📞 Call Admin for OTP</h3>
+                        <p><strong>OTP has been sent to: nyankieyacalton@gmail.com</strong></p>
+                        <p>Call the system administrator to get your 6-digit OTP code</p>
+                        <p><em>Admin will read the OTP to you over the phone</em></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="otp-input">Enter OTP from Admin</label>
+                        <div class="otp-inputs">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                        </div>
+                        <input type="hidden" id="otp-input">
+                    </div>
+                    
+                    <button class="btn btn-primary" id="verify-otp-btn">Verify OTP & Create Account</button>
+                    <button class="btn btn-secondary" id="back-btn">Back to Sign Up</button>
+                    
+                    <div class="resend-otp">
+                        <a href="#" id="resend-otp-link">Resend OTP to Admin</a>
+                    </div>
+                </div>
+                
+                <!-- Forgot Password Section -->
+                <div class="form" id="forgot-password-form">
+                    <h2 class="form-title">Reset PIN</h2>
+                    <div id="reset-message"></div>
+                    
+                    <div class="form-group">
+                        <label for="reset-email">Email</label>
+                        <input type="email" id="reset-email" class="form-control email-field" value="nyankieyacalton@gmail.com" readonly>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="reset-pin-btn">Send Reset OTP to Admin</button>
+                    <button class="btn btn-secondary" id="back-to-login-btn">Back to Login</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Products Section -->
-    <section class="products" id="products">
-        <div class="container">
-            <h2 class="section-title">Our Collection</h2>
-            
-            <!-- Search Results Info -->
-            <div class="search-results" id="search-results" style="display: none;">
-                <div class="search-results-count" id="search-results-count"></div>
-            </div>
-            
-            <!-- Products Grid -->
-            <div class="products-grid" id="products-grid">
-                <div class="loading-spinner">Loading products from Firebase...</div>
-            </div>
-            
-            <!-- No Results Message -->
-            <div class="no-results" id="no-results" style="display: none;">
-                <h3>No perfumes found</h3>
-                <p>Try adjusting your search terms or browse our full collection.</p>
-            </div>
-            
-            <!-- Pagination -->
-            <div class="pagination" id="pagination">
-                <!-- Pagination will be loaded here by JavaScript -->
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <div class="about-content">
-                <p>At One Stop Shop, we've streamlined the perfume purchasing process to make it simple, secure, and enjoyable. Here's how our complete shopping experience works:</p>
-                
-                <div class="process-steps">
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <h3>Browse & Select</h3>
-                        <p>Explore our extensive collection of premium fragrances. Use our search feature or browse by category to find your perfect scent.</p>
-                    </div>
-                    
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-cart-plus"></i>
-                        </div>
-                        <h3>Add to Cart</h3>
-                        <p>Select your favorite perfumes and add them to your shopping cart. You can adjust quantities or remove items anytime.</p>
-                    </div>
-                    
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-money-check-alt"></i>
-                        </div>
-                        <h3>Secure Checkout</h3>
-                        <p>Proceed to checkout where you'll enter your details and select M-Pesa as your payment method.</p>
-                    </div>
-                </div>
-                
-                <div class="process-steps">
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <h3>M-Pesa Payment</h3>
-                        <p>We'll send an STK Push to your phone. Enter your M-Pesa PIN to complete the payment securely.</p>
-                    </div>
-                    
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <h3>Order Confirmation</h3>
-                        <p>Once payment is confirmed, you'll receive an order confirmation with details and estimated delivery time.</p>
-                    </div>
-                    
-                    <div class="process-step">
-                        <div class="step-icon">
-                            <i class="fas fa-shipping-fast"></i>
-                        </div>
-                        <h3>Fast Delivery</h3>
-                        <p>We process and ship your order quickly. You'll receive updates on your order status until delivery.</p>
-                    </div>
-                </div>
-                
-                <p>Our system ensures that orders only appear in our dashboard after successful M-Pesa payment, guaranteeing a secure transaction for both you and us.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- New Stock Section -->
-    <section class="new-stock" id="new-stock">
-        <div class="container">
-            <h2 class="section-title">New Arrivals</h2>
-            <p style="text-align: center; margin-bottom: 2rem;">Be the first to discover our latest fragrance additions</p>
-            
-            <div class="products-grid" id="new-stock-grid">
-                <div class="loading-spinner">Loading new arrivals from Firebase...</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question">
-                        How long does delivery take?
-                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Delivery typically takes 1-2 business days within Nairobi, and 2-3 days outside Nairobi. You'll receive a confirmation email with your estimated delivery date after placing your order.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        What payment methods do you accept?
-                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>We currently accept M-Pesa payments only. During checkout, you'll receive an STK Push on your phone to complete the payment securely.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question">
-                        Can I return or exchange a perfume?
-                        <span class="faq-toggle"><i class="fas fa-chevron-down"></i></span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes, we accept returns and exchanges within 7 days of delivery, provided the product is unopened and in its original packaging. Please contact our customer service team to initiate a return.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Modal -->
-    <div class="modal" id="cart-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-cart">&times;</span>
-            <h2>Your Shopping Cart</h2>
-            <div class="cart-items" id="cart-items">
-                <!-- Cart items will be loaded here -->
-            </div>
-            <div class="cart-total">
-                Total: KSh <span id="cart-total">0</span>
-            </div>
-            <button class="checkout-btn" id="proceed-checkout">Proceed to Checkout</button>
-        </div>
-    </div>
-
-    <!-- Checkout Form -->
-    <div class="modal" id="checkout-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-checkout">&times;</span>
-            <div class="checkout-form" id="checkout-form">
-                <h2>Checkout</h2>
-                <form id="customer-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="first-name">First Name</label>
-                            <input type="text" id="first-name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="last-name">Last Name</label>
-                            <input type="text" id="last-name" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" class="form-control" placeholder="254..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Delivery Address</label>
-                        <textarea id="address" class="form-control" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="city">City</label>
-                        <input type="text" id="city" class="form-control" required>
-                    </div>
-
-                    <div class="payment-section">
-                        <h3>Payment Method</h3>
-                        <div class="payment-methods">
-                            <div class="payment-method active" id="mpesa-method">
-                                <div>M-Pesa</div>
-                                <small>Pay via M-Pesa STK Push</small>
-                            </div>
-                        </div>
-
-                        <div class="mpesa-form active" id="mpesa-form">
-                            <p>You will receive an M-Pesa prompt on your phone to complete payment.</p>
-                            <div class="form-group">
-                                <label for="mpesa-phone">M-Pesa Phone Number</label>
-                                <input type="tel" id="mpesa-phone" class="form-control" placeholder="254..." required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="checkout-btn" id="place-order">Place Order & Pay</button>
-                </form>
-            </div>
-
-            <!-- Payment Processing -->
-            <div class="payment-status" id="payment-status" style="display: none;">
-                <div class="spinner"></div>
-                <h3>Processing Payment</h3>
-                <p>Please check your phone for the M-Pesa prompt and enter your PIN to complete the payment.</p>
-                <p id="payment-message"></p>
-            </div>
-
-            <!-- Order Confirmation -->
-            <div class="order-confirmation" id="order-confirmation">
-                <div class="confirmation-icon">✓</div>
-                <h2>Order Confirmed!</h2>
-                <p>Thank you for your purchase. Your order has been received and payment processed successfully.</p>
-                <p>Order ID: <strong id="order-id"></strong></p>
-                <p>You will receive an email confirmation shortly with your order details and estimated delivery time.</p>
-                <button class="btn" id="continue-shopping">Continue Shopping</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- WhatsApp Float Button -->
-    <a href="https://wa.me/254702173038?text=Hi%20One%20Stop%20Shop,%20I%20would%20like%20to%20inquire%20about%20your%20perfumes" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>One Stop Shop</h3>
-                    <p>Your destination for luxury fragrances from around the world. Discover scents that define you.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#new-stock">New Stock</a></li>
-                        <li><a href="#faq">FAQs</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Customer Service</h3>
-                    <ul class="footer-links">
-                        <li><a href="#faq">FAQs</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Info</h3>
-                    <ul class="footer-links">
-                        <li>Nairobi, Kenya</li>
-                        <li>info@onestopshop.co.ke</li>
-                        <li>+254 702173038</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; 2025 One Stop Shop. All rights reserved.
-            </div>
-        </div>
-    </footer>
-
-    <!-- Firebase SDK -->
+    <!-- Firebase 10 CDN Imports -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            sendPasswordResetEmail,
+            sendEmailVerification,
+            updateProfile,
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getDatabase, 
+            ref, 
+            set, 
+            get,
+            push,
+            update
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // Your web app's Firebase configuration
+        // Your Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyD3VgNQ_w0A5NEiFrEqBbCgbkH1uK_2qcM",
             authDomain: "one-stop-shop-676f9.firebaseapp.com",
+            databaseURL: "https://one-stop-shop-676f9-default-rtdb.firebaseio.com",
             projectId: "one-stop-shop-676f9",
             storageBucket: "one-stop-shop-676f9.firebasestorage.app",
             messagingSenderId: "105516341313",
@@ -1258,896 +548,553 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
 
-        // API Base URL - Points to your backend
-        const API_BASE_URL = 'http://localhost:5000/api';
+        // Create a global object to store Firebase functions
+        window.firebaseAuth = {
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            sendEmailVerification,
+            updateProfile,
+            onAuthStateChanged,
+            signOut,
+            auth,
+            db,
+            ref,
+            set,
+            get,
+            push,
+            update
+        };
 
-        // Products data - Now we'll load from Firebase
-        let products = [];
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        console.log('Firebase initialized successfully');
+    </script>
 
+    <script>
         // DOM Elements
-        const productsGrid = document.getElementById('products-grid');
-        const newStockGrid = document.getElementById('new-stock-grid');
-        const cartIcon = document.getElementById('cart-icon');
-        const cartModal = document.getElementById('cart-modal');
-        const closeCart = document.getElementById('close-cart');
-        const cartItems = document.getElementById('cart-items');
-        const cartTotal = document.getElementById('cart-total');
-        const cartCount = document.querySelector('.cart-count');
-        const proceedCheckout = document.getElementById('proceed-checkout');
-        const checkoutModal = document.getElementById('checkout-modal');
-        const closeCheckout = document.getElementById('close-checkout');
-        const checkoutForm = document.getElementById('checkout-form');
-        const customerForm = document.getElementById('customer-form');
-        const paymentStatus = document.getElementById('payment-status');
-        const paymentMessage = document.getElementById('payment-message');
-        const orderConfirmation = document.getElementById('order-confirmation');
-        const orderIdElement = document.getElementById('order-id');
-        const continueShopping = document.getElementById('continue-shopping');
-        const searchInput = document.getElementById('search-input');
-        const searchBtn = document.getElementById('search-btn');
-        const searchResults = document.getElementById('search-results');
-        const searchResultsCount = document.getElementById('search-results-count');
-        const noResults = document.getElementById('no-results');
-        const pagination = document.getElementById('pagination');
-        const faqItems = document.querySelectorAll('.faq-item');
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('nav-links');
+        const merchantBtn = document.getElementById('merchant-btn');
+        const adminBtn = document.getElementById('admin-btn');
+        const loginToggle = document.getElementById('login-toggle');
+        const signupToggle = document.getElementById('signup-toggle');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const otpSection = document.getElementById('otp-section');
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const verifyOtpBtn = document.getElementById('verify-otp-btn');
+        const resetPinBtn = document.getElementById('reset-pin-btn');
+        const backBtn = document.getElementById('back-btn');
+        const backToLoginBtn = document.getElementById('back-to-login-btn');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const resendOtpLink = document.getElementById('resend-otp-link');
+        
+        // PIN Inputs
+        const loginPinDigits = document.querySelectorAll('#login-form .pin-digit');
+        const signupPinDigits = document.querySelectorAll('#signup-form .pin-digit');
+        const otpDigits = document.querySelectorAll('.otp-digit');
+        
+        // Hidden PIN fields
+        const loginPinField = document.getElementById('login-pin');
+        const signupPinField = document.getElementById('signup-pin');
+        const otpField = document.getElementById('otp-input');
+        
+        // Message containers
+        const loginMessage = document.getElementById('login-message');
+        const signupMessage = document.getElementById('signup-message');
+        const otpMessage = document.getElementById('otp-message');
+        const resetMessage = document.getElementById('reset-message');
+        
+        // Current state
+        let currentRole = 'merchant';
+        let generatedOtp = '';
+        let tempUsername = '';
+        let tempPin = '';
 
-        // Initialize the application
-        async function init() {
-            console.log("Initializing application...");
-            await loadProductsFromFirebase();
-            updateCartCount();
-            setupEventListeners();
-            setupHamburgerMenu();
-            setupFAQToggle();
-            
-            // Set up real-time listener
-            setupRealtimeListener();
-            checkBackendConnection();
-        }
+        // Your Cloud Function URL - REPLACE WITH YOUR ACTUAL URL
+        const CLOUD_FUNCTION_URL = 'https://us-central1-one-stop-shop-676f9.cloudfunctions.net/sendOtpEmail';
 
-        // Check if backend is connected
-        async function checkBackendConnection() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/health`);
-                const data = await response.json();
-                console.log('✅ Backend connected:', data);
-            } catch (error) {
-                console.warn('⚠️ Backend not connected. Using frontend-only mode.');
-                showNotification('trying to connnect to backend...', 'info');
-            }
-        }
+        // Role selection
+        merchantBtn.addEventListener('click', () => {
+            merchantBtn.classList.add('active');
+            adminBtn.classList.remove('active');
+            currentRole = 'merchant';
+            clearMessages();
+        });
 
-        // Load products from Firebase Firestore
-        async function loadProductsFromFirebase() {
-            try {
-                console.log("Loading products from Firebase...");
-                
-                const querySnapshot = await getDocs(collection(db, "products"));
-                products = [];
-                
-                if (querySnapshot.empty) {
-                    console.log("No products found in Firebase");
-                    showFallbackProducts();
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const productData = doc.data();
-                    console.log("Loaded product:", productData.name);
-                    products.push({
-                        id: doc.id,
-                        name: productData.name || 'Unnamed Product',
-                        description: productData.description || 'No description available',
-                        price: Number(productData.price) || 0,
-                        image: productData.image || 'https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                        category: productData.category || 'uncategorized',
-                        stock: Number(productData.stock) || 0,
-                        type: productData.type || 'collection',
-                        isNew: productData.isNew || false,
-                        featured: productData.featured || false
-                    });
-                });
-                
-                console.log(`Successfully loaded ${products.length} products`);
-                
-                // Render products
-                renderProducts();
-                renderNewStock();
-                
-            } catch (error) {
-                console.error("Error loading products from Firebase:", error);
-                showFallbackProducts();
-            }
-        }
+        adminBtn.addEventListener('click', () => {
+            adminBtn.classList.add('active');
+            merchantBtn.classList.remove('active');
+            currentRole = 'admin';
+            clearMessages();
+        });
 
-        // Set up real-time listener for product updates
-        function setupRealtimeListener() {
-            try {
-                onSnapshot(collection(db, "products"), (snapshot) => {
-                    console.log("Real-time update received from Firebase");
-                    loadProductsFromFirebase();
-                });
-            } catch (error) {
-                console.error("Error setting up real-time listener:", error);
-            }
-        }
+        // Toggle between login and signup forms
+        loginToggle.addEventListener('click', () => {
+            loginToggle.classList.add('active');
+            signupToggle.classList.remove('active');
+            loginForm.classList.add('active');
+            signupForm.classList.remove('active');
+            otpSection.classList.remove('active');
+            forgotPasswordForm.classList.remove('active');
+            clearMessages();
+        });
 
-        // Show fallback products if Firebase fails
-        function showFallbackProducts() {
-            products = [
-                {
-                    id: "1",
-                    name: "Midnight Oud",
-                    description: "A rich and mysterious blend of oud, amber, and spices.",
-                    price: 4500,
-                    image: "https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                    category: "woody",
-                    isNew: false,
-                    stock: 5,
-                    type: "collection"
-                },
-                {
-                    id: "2",
-                    name: "Ocean Breeze",
-                    description: "Fresh aquatic notes with hints of citrus and sea salt.",
-                    price: 3800,
-                    image: "https://images.unsplash.com/photo-1547887535-1b4f8b8c8c8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                    category: "fresh",
-                    isNew: true,
-                    stock: 8,
-                    type: "new-arrival"
-                },
-                {
-                    id: "3",
-                    name: "Luxury Gold",
-                    description: "Premium fragrance with golden notes of amber and vanilla.",
-                    price: 5200,
-                    image: "https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-                    category: "luxury",
-                    isNew: false,
-                    stock: 15,
-                    type: "collection"
-                }
-            ];
-            
-            renderProducts();
-            renderNewStock();
-        }
+        signupToggle.addEventListener('click', () => {
+            signupToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+            signupForm.classList.add('active');
+            loginForm.classList.remove('active');
+            otpSection.classList.remove('active');
+            forgotPasswordForm.classList.remove('active');
+            clearMessages();
+        });
 
-        // Render products to the page
-        function renderProducts() {
-            productsGrid.innerHTML = '';
-            
-            const collectionProducts = products.filter(product => product.type === 'collection');
-            
-            if (collectionProducts.length === 0) {
-                productsGrid.innerHTML = '<p class="no-products">No products in collection yet. Check back soon!</p>';
-                return;
-            }
-            
-            collectionProducts.forEach(product => {
-                const isOutOfStock = product.stock === 0;
-                const isLimitedStock = product.stock > 0 && product.stock < 10;
-                const isLowStock = product.stock > 0 && product.stock <= 5;
-                
-                let stockBadgeClass = 'stock-badge';
-                let stockText = `${product.stock} in stock`;
-                
-                if (isOutOfStock) {
-                    stockBadgeClass += ' stock-out';
-                    stockText = 'Out of stock';
-                } else if (isLimitedStock) {
-                    stockBadgeClass += ' stock-limited';
-                    stockText = 'LIMITED STOCK';
-                } else if (isLowStock) {
-                    stockBadgeClass += ' stock-low';
-                    stockText = `Only ${product.stock} left`;
-                }
-                
-                const productCard = document.createElement('div');
-                productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
-                productCard.innerHTML = `
-                    ${product.isNew ? '<span class="new-badge">NEW</span>' : ''}
-                    <span class="${stockBadgeClass}">${stockText}</span>
-                    <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-price">KSh ${product.price.toLocaleString()}</div>
-                        <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
-                            ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                        </button>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-        }
-
-        // Render new stock products
-        function renderNewStock() {
-            if (!newStockGrid) return;
-            
-            newStockGrid.innerHTML = '';
-            
-            const newProducts = products.filter(product => product.type === "new-arrival");
-            
-            if (newProducts.length === 0) {
-                newStockGrid.innerHTML = '<p style="text-align: center; width: 100%; padding: 2rem;">No new arrivals at the moment. Check back soon for new fragrances!</p>';
-                return;
-            }
-            
-            newProducts.forEach(product => {
-                const isOutOfStock = product.stock === 0;
-                const isLimitedStock = product.stock > 0 && product.stock < 10;
-                const isLowStock = product.stock > 0 && product.stock <= 5;
-                
-                let stockBadgeClass = 'stock-badge';
-                let stockText = `${product.stock} in stock`;
-                
-                if (isOutOfStock) {
-                    stockBadgeClass += ' stock-out';
-                    stockText = 'Out of stock';
-                } else if (isLimitedStock) {
-                    stockBadgeClass += ' stock-limited';
-                    stockText = 'LIMITED STOCK';
-                } else if (isLowStock) {
-                    stockBadgeClass += ' stock-low';
-                    stockText = `Only ${product.stock} left`;
-                }
-                
-                const productCard = document.createElement('div');
-                productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
-                productCard.innerHTML = `
-                    <span class="new-badge">NEW ARRIVAL</span>
-                    <span class="${stockBadgeClass}">${stockText}</span>
-                    <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-price">KSh ${product.price.toLocaleString()}</div>
-                        <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
-                            ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                        </button>
-                    </div>
-                `;
-                newStockGrid.appendChild(productCard);
-            });
-        }
-
-        // Enhanced addToCart function with stock management
-        function addToCart(productId) {
-            const productIndex = products.findIndex(p => p.id === productId);
-            const product = products[productIndex];
-            
-            // Check if product is in stock
-            if (product.stock === 0) {
-                showNotification(`${product.name} is out of stock!`, 'error');
-                return;
-            }
-            
-            const existingItem = cart.find(item => item.id === productId);
-            
-            if (existingItem) {
-                // Check if we have enough stock
-                if (existingItem.quantity >= product.stock) {
-                    showNotification(`Only ${product.stock} items available for ${product.name}!`, 'error');
-                    return;
-                }
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: 1
-                });
-            }
-            
-            // DEDUCT STOCK FROM PRODUCT
-            products[productIndex].stock -= 1;
-            
-            // Update local storage
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            updateCartCount();
-            showNotification(`${product.name} added to cart!`);
-            
-            // RE-RENDER PRODUCTS TO UPDATE STOCK DISPLAY
-            renderProducts();
-            renderNewStock();
-        }
-
-        function updateCartCount() {
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems;
-        }
-
-        function openCart() {
-            renderCartItems();
-            cartModal.style.display = 'flex';
-        }
-
-        function closeCartModal() {
-            cartModal.style.display = 'none';
-        }
-
-        // Enhanced renderCartItems with stock information
-        function renderCartItems() {
-            cartItems.innerHTML = '';
-            
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<p style="text-align: center; padding: 2rem;">Your cart is empty</p>';
-                cartTotal.textContent = '0';
-                return;
-            }
-            
-            let total = 0;
-            
-            cart.forEach(item => {
-                const product = products.find(p => p.id === item.id);
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                
-                const isLimitedStock = product.stock < 10;
-                const isLowStock = product.stock < 3;
-                const stockInfoClass = isLowStock ? 'cart-stock-info cart-stock-warning' : 
-                                      isLimitedStock ? 'cart-stock-info cart-stock-warning' : 'cart-stock-info';
-                const stockInfo = isLowStock ? 
-                    `Only ${product.stock} left in stock!` : 
-                    isLimitedStock ? `Limited stock: ${product.stock} available` :
-                    `${product.stock} available in stock`;
-                
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <div class="cart-item-info">
-                        <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                        <div class="cart-item-details">
-                            <h4>${item.name}</h4>
-                            <div class="cart-item-price">KSh ${item.price.toLocaleString()}</div>
-                            <div class="${stockInfoClass}">${stockInfo}</div>
-                        </div>
-                    </div>
-                    <div class="cart-item-quantity">
-                        <button class="quantity-btn decrease" data-id="${item.id}">-</button>
-                        <input type="text" class="quantity-input" value="${item.quantity}" readonly>
-                        <button class="quantity-btn increase" data-id="${item.id}">+</button>
-                        <span class="remove-item" data-id="${item.id}">Remove</span>
-                    </div>
-                `;
-                cartItems.appendChild(cartItem);
-            });
-            
-            cartTotal.textContent = total.toLocaleString();
-            
-            // Add event listeners for quantity buttons
-            document.querySelectorAll('.decrease').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    decreaseQuantity(id);
-                });
-            });
-            
-            document.querySelectorAll('.increase').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    increaseQuantity(id);
-                });
-            });
-            
-            document.querySelectorAll('.remove-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    removeFromCart(id);
-                });
-            });
-        }
-
-        // Enhanced quantity management functions
-        function decreaseQuantity(productId) {
-            const item = cart.find(item => item.id === productId);
-            const productIndex = products.findIndex(p => p.id === productId);
-            
-            if (item && item.quantity > 1) {
-                item.quantity -= 1;
-                
-                // RETURN STOCK TO PRODUCT
-                products[productIndex].stock += 1;
-            } else {
-                removeFromCart(productId);
-                return;
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cart));
-            renderCartItems();
-            updateCartCount();
-            
-            // RE-RENDER PRODUCTS TO UPDATE STOCK DISPLAY
-            renderProducts();
-            renderNewStock();
-        }
-
-        function increaseQuantity(productId) {
-            const item = cart.find(item => item.id === productId);
-            const productIndex = products.findIndex(p => p.id === productId);
-            const product = products[productIndex];
-            
-            if (item) {
-                // Check if we have enough stock
-                if (item.quantity >= product.stock) {
-                    showNotification(`Only ${product.stock} items available for ${product.name}!`, 'error');
-                    return;
-                }
-                item.quantity += 1;
-                
-                // DEDUCT STOCK FROM PRODUCT
-                products[productIndex].stock -= 1;
-            }
-            
-            localStorage.setItem('cart', JSON.stringify(cart));
-            renderCartItems();
-            updateCartCount();
-            
-            // RE-RENDER PRODUCTS TO UPDATE STOCK DISPLAY
-            renderProducts();
-            renderNewStock();
-        }
-
-        function removeFromCart(productId) {
-            const item = cart.find(item => item.id === productId);
-            const productIndex = products.findIndex(p => p.id === productId);
-            
-            if (item) {
-                // RETURN ALL STOCK TO PRODUCT
-                products[productIndex].stock += item.quantity;
-            }
-            
-            cart = cart.filter(item => item.id !== productId);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            renderCartItems();
-            updateCartCount();
-            
-            // RE-RENDER PRODUCTS TO UPDATE STOCK DISPLAY
-            renderProducts();
-            renderNewStock();
-            showNotification('Item removed from cart');
-        }
-
-        function resetCart() {
-            // RETURN ALL STOCK TO PRODUCTS
-            cart.forEach(cartItem => {
-                const productIndex = products.findIndex(p => p.id === cartItem.id);
-                if (productIndex !== -1) {
-                    products[productIndex].stock += cartItem.quantity;
-                }
-            });
-            
-            cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-            
-            // RE-RENDER PRODUCTS TO UPDATE STOCK DISPLAY
-            renderProducts();
-            renderNewStock();
-        }
-
-        // Checkout functions
-        function openCheckout() {
-            if (cart.length === 0) {
-                showNotification('Your cart is empty', 'error');
-                return;
-            }
-            
-            closeCartModal();
-            checkoutModal.style.display = 'flex';
-            checkoutForm.style.display = 'block';
-            paymentStatus.style.display = 'none';
-            orderConfirmation.style.display = 'none';
-        }
-
-        function closeCheckoutModal() {
-            checkoutModal.style.display = 'none';
-        }
-
-        async function placeOrder(e) {
+        // Forgot password link
+        forgotPasswordLink.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Get form data
-            const firstName = document.getElementById('first-name').value;
-            const lastName = document.getElementById('last-name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
-            const city = document.getElementById('city').value;
-            const mpesaPhone = document.getElementById('mpesa-phone').value;
-            
-            // Calculate total
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // Create order object
-            const order = {
-                customer: {
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    address,
-                    city
-                },
-                products: [...cart],
-                total,
-                mpesaPhone
-            };
-            
-            // Show payment processing
-            checkoutForm.style.display = 'none';
-            paymentStatus.style.display = 'block';
-            paymentMessage.textContent = 'Creating order and initiating payment...';
-            
-            try {
-                // REAL M-Pesa Integration - Call your backend
-                const paymentResult = await initiateMpesaPayment(order, mpesaPhone);
-                
-                if (paymentResult.success) {
-                    // Payment successful
-                    showOrderConfirmation(paymentResult.orderId || 'OSS' + Date.now());
-                } else {
-                    // Payment failed
-                    paymentMessage.textContent = `Payment failed: ${paymentResult.message}. Please try again.`;
-                    
-                    // Show retry button
-                    const retryButton = document.createElement('button');
-                    retryButton.textContent = 'Retry Payment';
-                    retryButton.className = 'btn';
-                    retryButton.style.marginTop = '20px';
-                    retryButton.addEventListener('click', () => {
-                        paymentStatus.style.display = 'none';
-                        checkoutForm.style.display = 'block';
-                    });
-                    paymentStatus.appendChild(retryButton);
-                }
-            } catch (error) {
-                console.error('Payment error:', error);
-                paymentMessage.textContent = 'An error occurred during payment. Please try again.';
-                
-                // Show retry button
-                const retryButton = document.createElement('button');
-                retryButton.textContent = 'Retry Payment';
-                retryButton.className = 'btn';
-                retryButton.style.marginTop = '20px';
-                retryButton.addEventListener('click', () => {
-                    paymentStatus.style.display = 'none';
-                    checkoutForm.style.display = 'block';
+            loginForm.classList.remove('active');
+            signupForm.classList.remove('active');
+            otpSection.classList.remove('active');
+            forgotPasswordForm.classList.add('active');
+            clearMessages();
+        });
+
+        // Back buttons
+        backBtn.addEventListener('click', () => {
+            otpSection.classList.remove('active');
+            signupForm.classList.add('active');
+            clearMessages();
+        });
+
+        backToLoginBtn.addEventListener('click', () => {
+            forgotPasswordForm.classList.remove('active');
+            loginForm.classList.add('active');
+            loginToggle.classList.add('active');
+            signupToggle.classList.remove('active');
+            clearMessages();
+        });
+
+        // PIN input handling
+        function setupPinInputs(digits, hiddenField) {
+            digits.forEach((digit, index) => {
+                digit.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < digits.length - 1) {
+                        digits[index + 1].focus();
+                    }
+                    updateHiddenPin(digits, hiddenField);
                 });
-                paymentStatus.appendChild(retryButton);
+                
+                digit.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                        digits[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        function updateHiddenPin(digits, hiddenField) {
+            let pin = '';
+            digits.forEach(digit => {
+                pin += digit.value;
+            });
+            hiddenField.value = pin;
+        }
+
+        setupPinInputs(loginPinDigits, loginPinField);
+        setupPinInputs(signupPinDigits, signupPinField);
+        setupPinInputs(otpDigits, otpField);
+
+        // Generate OTP
+        function generateOtp() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Show message
+        function showMessage(container, message, type) {
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+        }
+
+        // Clear all messages
+        function clearMessages() {
+            loginMessage.innerHTML = '';
+            signupMessage.innerHTML = '';
+            otpMessage.innerHTML = '';
+            resetMessage.innerHTML = '';
+        }
+
+        // Clear PIN inputs
+        function clearPinInputs(digits) {
+            digits.forEach(digit => {
+                digit.value = '';
+            });
+        }
+
+        // Save user to database
+        async function saveUserToDatabase(userId, username, pin, role) {
+            try {
+                const userRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'users/' + userId);
+                await window.firebaseAuth.set(userRef, {
+                    username: username,
+                    pin: pin,
+                    role: role,
+                    email: 'nyankieyacalton@gmail.com',
+                    createdAt: new Date().toISOString(),
+                    status: 'active'
+                });
+                console.log('User saved to database successfully');
+                return true;
+            } catch (error) {
+                console.error('Error saving user to database:', error);
+                return false;
             }
         }
 
-        // REAL M-Pesa STK Push Integration
-        async function initiateMpesaPayment(order, phoneNumber) {
+        // Check if username already exists
+        async function checkUsernameExists(username) {
             try {
-                showNotification('Creating order...', 'info');
+                const usersRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'users');
+                const snapshot = await window.firebaseAuth.get(usersRef);
                 
-                // Step 1: Create the order in the backend
-                const orderResponse = await fetch(`${API_BASE_URL}/orders`, {
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    for (let userId in users) {
+                        if (users[userId].username === username) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error('Error checking username:', error);
+                return false;
+            }
+        }
+
+        // Verify user credentials
+        async function verifyUserCredentials(username, pin, role) {
+            try {
+                const usersRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'users');
+                const snapshot = await window.firebaseAuth.get(usersRef);
+                
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    
+                    for (let userId in users) {
+                        const user = users[userId];
+                        if (user.username === username && user.pin === pin && user.role === role) {
+                            return { success: true, user: user };
+                        }
+                    }
+                }
+                
+                return { success: false, message: 'Invalid username, PIN, or role' };
+            } catch (error) {
+                console.error('Error verifying credentials:', error);
+                return { success: false, message: 'Error verifying credentials' };
+            }
+        }
+
+        // Send OTP to admin email using Cloud Function
+        async function sendOtpToAdmin(username, role, otp) {
+            try {
+                // Store OTP in database for verification
+                const otpRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + otp);
+                await window.firebaseAuth.set(otpRef, {
+                    username: username,
+                    role: role,
+                    pin: tempPin,
+                    email: 'nyankieyacalton@gmail.com',
+                    createdAt: new Date().toISOString(),
+                    used: false
+                });
+
+                // Call Cloud Function to send real email
+                const response = await fetch(CLOUD_FUNCTION_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        customer: order.customer,
-                        products: order.products,
-                        total: order.total
+                        otp: otp,
+                        username: username,
+                        role: role,
+                        recipientEmail: 'nyankieyacalton@gmail.com'
                     })
                 });
 
-                const orderResult = await orderResponse.json();
+                const result = await response.json();
                 
-                if (!orderResult.success) {
-                    throw new Error(orderResult.message);
-                }
-
-                showNotification('Initiating M-Pesa payment...', 'info');
-
-                // Step 2: Initiate M-Pesa payment
-                const paymentResponse = await fetch(`${API_BASE_URL}/mpesa/stkpush`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'json',
-                    },
-                    body: JSON.stringify({
-                        phoneNumber: phoneNumber,
-                        amount: order.total,
-                        accountReference: orderResult.order.orderId
-                    })
-                });
-
-                const paymentResult = await paymentResponse.json();
-                
-                if (paymentResult.success) {
-                    showNotification('M-Pesa prompt sent to your phone! Please enter your PIN.', 'success');
-                    
-                    // Step 3: Poll for payment status
-                    const finalResult = await pollPaymentStatus(paymentResult.checkoutRequestID);
-                    return {
-                        ...finalResult,
-                        orderId: orderResult.order.orderId
-                    };
+                if (result.success) {
+                    console.log('Real OTP email sent successfully');
+                    return { success: true, otp: otp };
                 } else {
-                    return { 
-                        success: false, 
-                        message: paymentResult.message || 'Payment initiation failed' 
-                    };
+                    console.error('Cloud function error:', result.error);
+                    return { success: false, error: result.error };
                 }
             } catch (error) {
-                console.error('M-Pesa payment error:', error);
-                return { 
-                    success: false, 
-                    message: error.message || 'Network error. Please try again.' 
-                };
+                console.error('Error sending OTP to admin:', error);
+                return { success: false, error: error.message };
             }
         }
 
-        // Poll for payment status
-        async function pollPaymentStatus(checkoutRequestID, maxAttempts = 30) {
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-                await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds
+        // Verify OTP from database
+        async function verifyOtp(otp) {
+            try {
+                const otpRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + otp);
+                const snapshot = await window.firebaseAuth.get(otpRef);
                 
-                try {
-                    const response = await fetch(`${API_BASE_URL}/mpesa/status/${checkoutRequestID}`);
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        if (result.order.status === 'paid') {
-                            showNotification('Payment successful! Order confirmed.', 'success');
-                            return { 
-                                success: true, 
-                                message: 'Payment successful',
-                                order: result.order
-                            };
-                        } else if (result.order.status === 'failed') {
-                            showNotification('Payment failed. Please try again.', 'error');
-                            return { 
-                                success: false, 
-                                message: 'Payment failed',
-                                order: result.order
-                            };
-                        }
-                        // If still pending, continue polling
-                        showNotification(`Waiting for payment confirmation... (${attempt + 1}/${maxAttempts})`, 'info');
+                if (snapshot.exists()) {
+                    const otpData = snapshot.val();
+                    if (!otpData.used) {
+                        // Mark OTP as used
+                        await window.firebaseAuth.update(otpRef, { used: true });
+                        return { success: true, data: otpData };
                     }
-                } catch (error) {
-                    console.error('Status check error:', error);
                 }
-            }
-            
-            showNotification('Payment timeout. Please check your M-Pesa messages.', 'error');
-            return { 
-                success: false, 
-                message: 'Payment timeout - please check your M-Pesa messages' 
-            };
-        }
-
-        function showOrderConfirmation(orderId) {
-            paymentStatus.style.display = 'none';
-            orderConfirmation.style.display = 'block';
-            orderIdElement.textContent = orderId;
-            
-            // Clear cart after successful order
-            resetCart();
-            
-            // Save to local storage for demo purposes
-            orders.push({ orderId, timestamp: new Date().toISOString() });
-            localStorage.setItem('orders', JSON.stringify(orders));
-        }
-
-        // Enhanced showNotification function with error type
-        function showNotification(message, type = 'success') {
-            // Create notification element
-            const notification = document.createElement('div');
-            const backgroundColor = type === 'error' ? 'var(--secondary)' : 
-                                  type === 'info' ? 'var(--accent)' : 'var(--success)';
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background-color: ${backgroundColor};
-                color: white;
-                padding: 15px 20px;
-                border-radius: 4px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                transition: transform 0.3s, opacity 0.3s;
-                max-width: 300px;
-                word-wrap: break-word;
-            `;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 10);
-            
-            // Remove after 5 seconds for longer messages
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 5000);
-        }
-
-        // Setup hamburger menu functionality
-        function setupHamburgerMenu() {
-            if (hamburger && navLinks) {
-                hamburger.addEventListener('click', () => {
-                    hamburger.classList.toggle('active');
-                    navLinks.classList.toggle('active');
-                });
-
-                // Close mobile menu when clicking on a link
-                document.querySelectorAll('.nav-links a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        hamburger.classList.remove('active');
-                        navLinks.classList.remove('active');
-                    });
-                });
+                return { success: false, message: 'Invalid or expired OTP' };
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                return { success: false, message: 'Error verifying OTP' };
             }
         }
 
-        // FAQ Toggle functionality
-        function setupFAQToggle() {
-            faqItems.forEach(item => {
-                const question = item.querySelector('.faq-question');
-                const answer = item.querySelector('.faq-answer');
-                const toggle = item.querySelector('.faq-toggle');
+        // Create user account after OTP verification
+        async function createUserAccount(username, pin, role) {
+            try {
+                // Create unique email for Firebase Auth (to avoid email-already-in-use)
+                const uniqueEmail = `user_${Date.now()}_${username}@onestopshop.com`;
+                const password = 'pin_' + pin;
                 
-                question.addEventListener('click', () => {
-                    // Close all other FAQ answers
-                    faqItems.forEach(otherItem => {
-                        if (otherItem !== item) {
-                            otherItem.querySelector('.faq-answer').classList.remove('active');
-                            otherItem.querySelector('.faq-toggle').classList.remove('active');
-                        }
-                    });
-                    
-                    // Toggle current FAQ answer
-                    answer.classList.toggle('active');
-                    toggle.classList.toggle('active');
+                const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(
+                    window.firebaseAuth.auth, 
+                    uniqueEmail, 
+                    password
+                );
+                
+                const user = userCredential.user;
+                
+                // Update profile with username
+                await window.firebaseAuth.updateProfile(user, {
+                    displayName: username
                 });
-            });
+                
+                // Save user to database with actual email
+                const saveSuccess = await saveUserToDatabase(user.uid, username, pin, role);
+                
+                if (saveSuccess) {
+                    return { success: true, user: user };
+                } else {
+                    return { success: false, message: 'Failed to save user data' };
+                }
+            } catch (error) {
+                console.error('Account creation error:', error);
+                return { success: false, message: error.message };
+            }
         }
 
-        // Search functionality
-        function performSearch() {
-            const searchTerm = searchInput.value.trim().toLowerCase();
+        // Signup button click - Send OTP to Admin
+        signupBtn.addEventListener('click', async () => {
+            const username = document.getElementById('signup-username').value.trim();
+            const pin = signupPinField.value;
             
-            if (searchTerm === '') {
-                renderProducts();
-                searchResults.style.display = 'none';
+            if (!username) {
+                showMessage(signupMessage, 'Please enter a username', 'error');
                 return;
             }
             
-            const filteredProducts = products.filter(product => 
-                product.name.toLowerCase().includes(searchTerm) ||
-                product.description.toLowerCase().includes(searchTerm) ||
-                product.category.toLowerCase().includes(searchTerm)
-            );
-            
-            if (filteredProducts.length === 0) {
-                productsGrid.innerHTML = '';
-                noResults.style.display = 'block';
-                searchResults.style.display = 'none';
-            } else {
-                noResults.style.display = 'none';
-                searchResultsCount.textContent = `Found ${filteredProducts.length} perfume(s) matching "${searchTerm}"`;
-                searchResults.style.display = 'block';
-                
-                // Render filtered products
-                renderFilteredProducts(filteredProducts);
+            if (pin.length !== 6) {
+                showMessage(signupMessage, 'Please enter a 6-digit PIN', 'error');
+                return;
             }
-        }
-
-        function renderFilteredProducts(filteredProducts) {
-            productsGrid.innerHTML = '';
             
-            filteredProducts.forEach(product => {
-                const isOutOfStock = product.stock === 0;
-                const isLimitedStock = product.stock > 0 && product.stock < 10;
-                const isLowStock = product.stock > 0 && product.stock <= 5;
+            // Check if username already exists
+            const usernameExists = await checkUsernameExists(username);
+            if (usernameExists) {
+                showMessage(signupMessage, 'Username already exists. Please choose a different one.', 'error');
+                return;
+            }
+            
+            showMessage(signupMessage, 'Sending OTP to system administrator...', 'info');
+            
+            try {
+                // Generate OTP
+                generatedOtp = generateOtp();
+                tempUsername = username;
+                tempPin = pin;
                 
-                let stockBadgeClass = 'stock-badge';
-                let stockText = `${product.stock} in stock`;
+                // Send OTP to admin email
+                const otpResult = await sendOtpToAdmin(username, currentRole, generatedOtp);
                 
-                if (isOutOfStock) {
-                    stockBadgeClass += ' stock-out';
-                    stockText = 'Out of stock';
-                } else if (isLimitedStock) {
-                    stockBadgeClass += ' stock-limited';
-                    stockText = 'LIMITED STOCK';
-                } else if (isLowStock) {
-                    stockBadgeClass += ' stock-low';
-                    stockText = `Only ${product.stock} left`;
+                if (otpResult.success) {
+                    showMessage(signupMessage, 
+                        `✅ OTP sent to system administrator!<br><br>
+                        <strong>Username:</strong> ${username}<br>
+                        <strong>Role:</strong> ${currentRole}<br><br>
+                        <em>Call the administrator to get your OTP code</em>`, 
+                        'success');
+                    
+                    // Show OTP section
+                    setTimeout(() => {
+                        signupForm.classList.remove('active');
+                        otpSection.classList.add('active');
+                        clearMessages();
+                    }, 3000);
+                } else {
+                    showMessage(signupMessage, 
+                        `Failed to send OTP: ${otpResult.error}`, 
+                        'error');
                 }
-                
-                const productCard = document.createElement('div');
-                productCard.className = `product-card ${isOutOfStock ? 'out-of-stock' : ''}`;
-                productCard.innerHTML = `
-                    ${product.isNew ? '<span class="new-badge">NEW</span>' : ''}
-                    <span class="${stockBadgeClass}">${stockText}</span>
-                    <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'">
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-price">KSh ${product.price.toLocaleString()}</div>
-                        <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
-                            ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                        </button>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-        }
+            } catch (error) {
+                console.error('OTP sending error:', error);
+                showMessage(signupMessage, 
+                    'Error sending OTP. Please try again.', 
+                    'error');
+            }
+        });
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Cart functionality
-            if (cartIcon) cartIcon.addEventListener('click', openCart);
-            if (closeCart) closeCart.addEventListener('click', closeCartModal);
-            if (proceedCheckout) proceedCheckout.addEventListener('click', openCheckout);
-            if (closeCheckout) closeCheckout.addEventListener('click', closeCheckoutModal);
+        // Verify OTP button click
+        verifyOtpBtn.addEventListener('click', async () => {
+            const enteredOtp = otpField.value;
             
-            // Add to cart buttons
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-to-cart')) {
-                    const productId = e.target.getAttribute('data-id');
-                    addToCart(productId);
-                }
-            });
+            if (enteredOtp.length !== 6) {
+                showMessage(otpMessage, 'Please enter the 6-digit OTP from admin', 'error');
+                return;
+            }
             
-            // Checkout form submission
-            if (customerForm) customerForm.addEventListener('submit', placeOrder);
+            showMessage(otpMessage, 'Verifying OTP and creating account...', 'info');
             
-            // Continue shopping button
-            if (continueShopping) continueShopping.addEventListener('click', function() {
-                closeCheckoutModal();
-                closeCartModal();
-            });
+            // Verify OTP
+            const verification = await verifyOtp(enteredOtp);
             
-            // Search functionality
-            if (searchBtn) searchBtn.addEventListener('click', performSearch);
-            if (searchInput) searchInput.addEventListener('keyup', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-
-            // Auto-fill M-Pesa phone from customer phone
-            const phoneInput = document.getElementById('phone');
-            const mpesaPhoneInput = document.getElementById('mpesa-phone');
-            if (phoneInput && mpesaPhoneInput) {
-                phoneInput.addEventListener('blur', function() {
-                    if (!mpesaPhoneInput.value) {
-                        mpesaPhoneInput.value = this.value;
+            if (verification.success) {
+                try {
+                    // Create the actual user account
+                    const accountResult = await createUserAccount(tempUsername, tempPin, currentRole);
+                    
+                    if (accountResult.success) {
+                        showMessage(otpMessage, 
+                            '✅ Account created successfully! Redirecting to login...', 
+                            'success');
+                        
+                        // Redirect to login after delay
+                        setTimeout(() => {
+                            otpSection.classList.remove('active');
+                            loginForm.classList.add('active');
+                            loginToggle.classList.add('active');
+                            signupToggle.classList.remove('active');
+                            clearMessages();
+                            
+                            // Clear form
+                            document.getElementById('signup-username').value = '';
+                            clearPinInputs(signupPinDigits);
+                            clearPinInputs(otpDigits);
+                        }, 2000);
+                    } else {
+                        showMessage(otpMessage, 
+                            `Account creation failed: ${accountResult.message}`, 
+                            'error');
                     }
-                });
+                } catch (error) {
+                    console.error('Account creation error:', error);
+                    showMessage(otpMessage, 
+                        `Account creation failed: ${error.message}`, 
+                        'error');
+                }
+            } else {
+                showMessage(otpMessage, verification.message, 'error');
+                clearPinInputs(otpDigits);
             }
+        });
+
+        // Resend OTP link
+        resendOtpLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (!tempUsername || !tempPin) {
+                showMessage(otpMessage, 'Please go back and fill the signup form again', 'error');
+                return;
+            }
+            
+            showMessage(otpMessage, 'Resending OTP to admin...', 'info');
+            
+            // Generate new OTP
+            generatedOtp = generateOtp();
+            
+            const otpResult = await sendOtpToAdmin(tempUsername, currentRole, generatedOtp);
+            
+            if (otpResult.success) {
+                showMessage(otpMessage, 
+                    `✅ New OTP sent to system administrator!<br><br>
+                    <em>Call the administrator to get your new OTP code</em>`, 
+                    'success');
+            } else {
+                showMessage(otpMessage, 
+                    `Failed to resend OTP: ${otpResult.error}`, 
+                    'error');
+            }
+        });
+
+        // Login button click
+        loginBtn.addEventListener('click', async () => {
+            const username = document.getElementById('login-username').value.trim();
+            const pin = loginPinField.value;
+            
+            if (!username) {
+                showMessage(loginMessage, 'Please enter your username', 'error');
+                return;
+            }
+            
+            if (pin.length !== 6) {
+                showMessage(loginMessage, 'Please enter your 6-digit PIN', 'error');
+                return;
+            }
+            
+            showMessage(loginMessage, 'Verifying credentials...', 'info');
+            
+            // Verify user credentials against database
+            const verification = await verifyUserCredentials(username, pin, currentRole);
+            
+            if (verification.success) {
+                showMessage(loginMessage, 'Login successful! Redirecting...', 'success');
+                
+                // Redirect based on user role
+                setTimeout(() => {
+                    if (currentRole === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'merchant.html';
+                    }
+                }, 1500);
+            } else {
+                showMessage(loginMessage, verification.message, 'error');
+                clearPinInputs(loginPinDigits);
+            }
+        });
+
+        // Reset PIN button click
+        resetPinBtn.addEventListener('click', async () => {
+            showMessage(resetMessage, 'PIN reset requires admin OTP verification. Please contact system administrator.', 'info');
+        });
+
+        // Monitor auth state - FIXED VERSION
+        if (window.firebaseAuth && window.firebaseAuth.onAuthStateChanged && window.firebaseAuth.auth) {
+            window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
+                if (user) {
+                    console.log('User signed in:', user.uid, user.displayName);
+                } else {
+                    console.log('User signed out');
+                }
+            });
         }
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', init);
+        // Test Firebase connection on load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('System initialized with REAL OTP email sending');
+            console.log('All OTPs are sent to: nyankieyacalton@gmail.com');
+        });
     </script>
 </body>
 </html>

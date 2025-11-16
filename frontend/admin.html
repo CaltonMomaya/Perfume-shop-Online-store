@@ -532,6 +532,25 @@
             border: 1px solid #f5c6cb;
         }
 
+        /* Counter Button */
+        .counter-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn-counter {
+            background-color: var(--info);
+            font-size: 1rem;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .btn-counter:hover {
+            background-color: #2980b9;
+        }
+
         /* Mobile Styles */
         @media (max-width: 992px) {
             .admin-container {
@@ -619,8 +638,8 @@
                 <div class="user-info">
                     <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
                     <div>
-                        <p>Admin User</p>
-                        <small>Administrator</small>
+                        <p id="logged-in-username">Loading...</p>
+                        <small>Merchant</small>
                     </div>
                 </div>
             </div>
@@ -638,6 +657,7 @@
                 <div class="tab active" data-tab="add-new-stock">Add New Stock</div>
                 <div class="tab" data-tab="add-products">Add Products</div>
                 <div class="tab" data-tab="view-products">View Products</div>
+                <div class="tab" data-tab="proceed-counter">Proceed to Counter</div>
             </div>
 
             <!-- Add New Stock Tab (New Arrivals) -->
@@ -781,6 +801,25 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Proceed to Counter Tab -->
+            <div class="tab-content" id="proceed-counter">
+                <div class="form-container">
+                    <h2>Proceed to Counter</h2>
+                    <p class="small" style="color: #666; margin-bottom: 1.5rem;">Ready to start selling? Click the button below to open the sales counter.</p>
+                    
+                    <div style="text-align: center; padding: 3rem 0;">
+                        <i class="fas fa-cash-register" style="font-size: 4rem; color: var(--info); margin-bottom: 1.5rem;"></i>
+                        <h3 style="margin-bottom: 1rem; color: var(--primary);">Ready to Start Selling?</h3>
+                        <p style="color: #666; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            Click the button below to open the sales counter where you can process customer orders and manage transactions.
+                        </p>
+                        <button class="btn btn-counter" id="open-counter" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                            <i class="fas fa-cash-register"></i> Open Sales Counter
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -864,11 +903,14 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD3VgNQ_w0A5NEiFrEqBbCgbkH1uK_2qcM",
             authDomain: "one-stop-shop-676f9.firebaseapp.com",
+            databaseURL: "https://one-stop-shop-676f9-default-rtdb.firebaseio.com",
             projectId: "one-stop-shop-676f9",
             storageBucket: "one-stop-shop-676f9.firebasestorage.app",
             messagingSenderId: "105516341313",
@@ -879,6 +921,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const rtdb = getDatabase(app);
 
         // DOM Elements
         const newStockForm = document.getElementById('new-stock-form');
@@ -889,6 +933,8 @@
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const searchInput = document.getElementById('search-products');
+        const openCounterBtn = document.getElementById('open-counter');
+        const loggedInUsername = document.getElementById('logged-in-username');
         
         // Edit Modal Elements
         const editProductModal = document.getElementById('edit-product-modal');
@@ -901,11 +947,40 @@
 
         // Initialize the dashboard
         function initDashboard() {
+            loadUserInfo();
             loadProducts();
             setupEventListeners();
             setupTabs();
             setupRealtimeListener();
             setupModalEvents();
+        }
+
+        // Load user information from Firebase
+        async function loadUserInfo() {
+            try {
+                // Check if user is authenticated
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        // Get user data from Realtime Database
+                        const userRef = ref(rtdb, 'users/' + user.uid);
+                        const snapshot = await get(userRef);
+                        
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            loggedInUsername.textContent = userData.username || 'Admin User';
+                        } else {
+                            // Fallback to displayName from auth if no data in RTDB
+                            loggedInUsername.textContent = user.displayName || 'Admin User';
+                        }
+                    } else {
+                        // No user is signed in, redirect to login
+                        window.location.href = 'index.html';
+                    }
+                });
+            } catch (error) {
+                console.error("Error loading user info:", error);
+                loggedInUsername.textContent = 'Admin User';
+            }
         }
 
         // Set up real-time listener for product updates
@@ -1286,6 +1361,11 @@
                         card.style.display = 'none';
                     }
                 });
+            });
+
+            // Open Counter button
+            openCounterBtn.addEventListener('click', () => {
+                window.location.href = 'shopsell.html';
             });
         }
 

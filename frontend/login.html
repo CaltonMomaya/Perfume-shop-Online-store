@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+    <meta name="theme-color" content="#2c3e50">
+    <title>onsestopshop F3</title>
+
+    <!-- EmailJS (public key init) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS with your PUBLIC key
+        (function() {
+            if (window.emailjs) {
+                emailjs.init("MGI62By2LOWVwfjYc");
+            } else {
+                console.warn("EmailJS library not loaded");
+            }
+        })();
+    </script>
+
+    <style>
+        /* ============================
+           Your original styles (kept)
+           ============================ */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --merchant: #e67e22;
+            --admin: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+            --warning: #e74c3c;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        /* Reset and base styles */
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif}
+        body{
+            background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+            min-height:100vh;
+            min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+            /* Prevent zoom on input focus for iOS */
+            touch-action: manipulation;
+        }
+        
+        /* Container and layout */
+        .container{
+            display:flex;
+            width:100%;
+            max-width:1000px;
+            background:rgba(255,255,255,0.95);
+            border-radius:20px;
+            overflow:hidden;
+            box-shadow:var(--shadow);
+            min-height: 600px;
+        }
+        
+        .brand-section{
+            flex:1;
+            background:linear-gradient(135deg,var(--primary),var(--accent));
+            color:white;
+            padding:40px;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            position: relative;
+        }
+        
+        .brand-section h1{
+            font-size:2.5rem;
+            margin-bottom:20px;
+            font-weight:700;
+            line-height: 1.2;
+        }
+        
+        .brand-section p{
+            font-size:1.1rem;
+            opacity:.9;
+            line-height:1.6;
+        }
+        
+        .form-section{
+            flex:1;
+            padding:40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .form-container{
+            width:100%;
+        }
+        
+        /* Role selection */
+        .role-selection{
+            display:flex;
+            gap:15px;
+            margin-bottom:30px;
+        }
+        
+        .role-btn{
+            flex:1;
+            padding:15px;
+            text-align:center;
+            background:var(--light);
+            border:none;
+            border-radius:10px;
+            font-weight:600;
+            cursor:pointer;
+            transition:var(--transition);
+            /* Improve touch targets */
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .role-btn.merchant{
+            border:2px solid var(--merchant);
+            color:var(--merchant);
+        }
+        
+        .role-btn.admin{
+            border:2px solid var(--admin);
+            color:var(--admin);
+        }
+        
+        .role-btn.active.merchant{
+            background:var(--merchant);
+            color:white;
+        }
+        
+        .role-btn.active.admin{
+            background:var(--admin);
+            color:white;
+        }
+        
+        /* Form toggle */
+        .form-toggle{
+            display:flex;
+            margin-bottom:30px;
+            border-radius:50px;
+            background:var(--light);
+            padding:5px;
+        }
+        
+        .toggle-btn{
+            flex:1;
+            padding:12px;
+            text-align:center;
+            cursor:pointer;
+            border-radius:50px;
+            transition:var(--transition);
+            font-weight:600;
+            /* Improve touch targets */
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-btn.active{
+            background:var(--primary);
+            color:white;
+        }
+        
+        /* Forms */
+        .form{
+            display:none;
+        }
+        
+        .form.active{
+            display:block;
+            animation:fadeIn .5s ease;
+        }
+        
+        @keyframes fadeIn{
+            from{opacity:0;transform:translateY(10px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+        
+        .form-title{
+            font-size:1.8rem;
+            margin-bottom:25px;
+            color:var(--primary);
+            text-align:center;
+            line-height: 1.3;
+        }
+        
+        .form-group{
+            margin-bottom:20px;
+        }
+        
+        .form-group label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+            color:var(--dark);
+        }
+        
+        .form-control{
+            width:100%;
+            padding:14px;
+            border:2px solid #e0e0e0;
+            border-radius:10px;
+            font-size:1rem;
+            transition:var(--transition);
+            /* Prevent zoom on iOS */
+            font-size: 16px;
+        }
+        
+        .form-control:focus{
+            border-color:var(--secondary);
+            outline:none;
+            box-shadow:0 0 0 3px rgba(52,152,219,0.2);
+        }
+        
+        /* PIN and OTP inputs */
+        .pin-inputs, .otp-inputs{
+            display:flex;
+            gap:10px;
+            margin-bottom:20px;
+            justify-content: center;
+        }
+        
+        .pin-inputs input, .otp-inputs input{
+            width:50px;
+            height:50px;
+            text-align:center;
+            font-size:1.5rem;
+            border:2px solid #e0e0e0;
+            border-radius:10px;
+            transition:var(--transition);
+            /* Prevent zoom on iOS */
+            font-size: 20px;
+        }
+        
+        .pin-inputs input:focus, .otp-inputs input:focus{
+            border-color:var(--secondary);
+            outline:none;
+            box-shadow:0 0 0 3px rgba(52,152,219,0.2);
+        }
+        
+        /* Buttons */
+        .btn{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            font-size:1rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:var(--transition);
+            /* Improve touch targets */
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary{
+            background:var(--secondary);
+            color:white;
+        }
+        
+        .btn-primary:hover, .btn-primary:active{
+            background:#2980b9;
+            transform:translateY(-2px);
+        }
+        
+        .btn-secondary{
+            background:var(--accent);
+            color:white;
+            margin-top:10px;
+        }
+        
+        .btn-secondary:hover, .btn-secondary:active{
+            background:#8e44ad;
+            transform:translateY(-2px);
+        }
+        
+        /* Links */
+        .forgot-password{
+            text-align:center;
+            margin-top:20px;
+        }
+        
+        .forgot-password a{
+            color:var(--secondary);
+            text-decoration:none;
+            font-weight:600;
+        }
+        
+        .forgot-password a:hover{
+            text-decoration:underline;
+        }
+        
+        /* Messages */
+        .message{
+            padding:12px;
+            border-radius:10px;
+            margin-bottom:20px;
+            text-align:center;
+            font-weight:600;
+        }
+        
+        .message.success{
+            background:rgba(46,204,113,0.2);
+            color:var(--success);
+            border:1px solid var(--success);
+        }
+        
+        .message.error{
+            background:rgba(231,76,60,0.2);
+            color:var(--warning);
+            border:1px solid var(--warning);
+        }
+        
+        .message.info{
+            background:rgba(52,152,219,0.2);
+            color:var(--secondary);
+            border:1px solid var(--secondary);
+        }
+        
+        /* OTP section */
+        .otp-section{
+            display:none;
+        }
+        
+        .otp-section.active{
+            display:block;
+            animation:fadeIn .5s ease;
+        }
+        
+        .admin-call-instruction{
+            background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            color:white;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+            text-align:center;
+        }
+        
+        .resend-otp{
+            text-align:center;
+            margin-top:15px;
+        }
+        
+        .resend-otp a{
+            color:var(--secondary);
+            text-decoration:none;
+            font-weight:600;
+        }
+        
+        .resend-otp a:hover{
+            text-decoration:underline;
+        }
+        
+        .debug-info{
+            background:#f8f9fa;
+            padding:10px;
+            border-radius:5px;
+            margin-top:10px;
+            font-size:.8rem;
+            color:#666;
+        }
+        
+        /* ============================
+           RESPONSIVE DESIGN
+           ============================ */
+        
+        /* Tablets and small laptops */
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 90%;
+                min-height: auto;
+            }
+            
+            .brand-section, .form-section {
+                padding: 30px;
+            }
+            
+            .brand-section h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* Tablets in portrait mode */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                max-width: 600px;
+            }
+            
+            .brand-section {
+                padding: 30px 20px;
+                min-height: 200px;
+            }
+            
+            .form-section {
+                padding: 30px 20px;
+            }
+            
+            .brand-section h1 {
+                font-size: 2rem;
+                margin-bottom: 15px;
+            }
+            
+            .brand-section p {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Large phones */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+            
+            .container {
+                max-width: 100%;
+                border-radius: 15px;
+            }
+            
+            .brand-section, .form-section {
+                padding: 25px 20px;
+            }
+            
+            .brand-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-title {
+                font-size: 1.6rem;
+            }
+            
+            .role-selection {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .pin-inputs, .otp-inputs {
+                gap: 8px;
+            }
+            
+            .pin-inputs input, .otp-inputs input {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Small phones */
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+            
+            .brand-section, .form-section {
+                padding: 20px 15px;
+            }
+            
+            .brand-section h1 {
+                font-size: 1.6rem;
+            }
+            
+            .form-title {
+                font-size: 1.4rem;
+            }
+            
+            .form-control {
+                padding: 12px;
+            }
+            
+            .btn {
+                padding: 12px;
+            }
+            
+            .pin-inputs, .otp-inputs {
+                gap: 6px;
+            }
+            
+            .pin-inputs input, .otp-inputs input {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .admin-call-instruction {
+                padding: 15px;
+            }
+            
+            .admin-call-instruction h3 {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Extra small phones (iPhone 5/SE) */
+        @media (max-width: 350px) {
+            .brand-section h1 {
+                font-size: 1.4rem;
+            }
+            
+            .form-title {
+                font-size: 1.3rem;
+            }
+            
+            .pin-inputs, .otp-inputs {
+                gap: 5px;
+            }
+            
+            .pin-inputs input, .otp-inputs input {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Fix for iOS Safari specific issues */
+        @supports (-webkit-touch-callout: none) {
+            /* CSS specific to iOS devices */
+            input, textarea, select {
+                font-size: 16px !important; /* Prevent zoom on focus */
+            }
+            
+            .btn, .role-btn, .toggle-btn {
+                -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+            }
+        }
+        
+        /* Fix for Android Chrome */
+        @supports not (-webkit-touch-callout: none) {
+            /* CSS for non-iOS devices */
+            body {
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+        
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .brand-section {
+                background:linear-gradient(135deg,var(--primary),var(--accent));
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(30, 30, 30, 0.95);
+                color: #f0f0f0;
+            }
+            
+            .form-control {
+                background-color: #333;
+                color: #f0f0f0;
+                border-color: #555;
+            }
+            
+            .form-control:focus {
+                background-color: #333;
+                color: #f0f0f0;
+            }
+            
+            .pin-inputs input, .otp-inputs input {
+                background-color: #333;
+                color: #f0f0f0;
+                border-color: #555;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand-section">
+            <h1>One stop shop F3</h1>
+            <p> All registrations require OTP verification.</p>
+        </div>
+
+        <div class="form-section">
+            <div class="form-container">
+                <div class="role-selection">
+                    <button class="role-btn merchant active" id="merchant-btn">Merchant</button>
+                    <button class="role-btn admin" id="admin-btn">Admin</button>
+                </div>
+
+                <div class="form-toggle">
+                    <div class="toggle-btn active" id="login-toggle">Login</div>
+                    <div class="toggle-btn" id="signup-toggle">Sign Up</div>
+                </div>
+
+                <!-- LOGIN -->
+                <div class="form active" id="login-form">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <div id="login-message"></div>
+
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" class="form-control" placeholder="Enter your username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-pin">6-Digit PIN</label>
+                        <div class="pin-inputs" id="login-pin-inputs">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                        </div>
+                        <input type="hidden" id="login-pin">
+                    </div>
+
+                    <button class="btn btn-primary" id="login-btn">Login</button>
+
+                    <div class="forgot-password">
+                        <a href="#" id="forgot-password-link">Forgot PIN?</a>
+                    </div>
+                </div>
+
+                <!-- SIGNUP -->
+                <div class="form" id="signup-form">
+                    <h2 class="form-title">Create Account</h2>
+                    <div id="signup-message"></div>
+
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-control" placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" class="form-control" placeholder="Choose a username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-pin">Set 6-Digit PIN</label>
+                        <div class="pin-inputs" id="signup-pin-inputs">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                            <input type="password" maxlength="1" class="pin-digit">
+                        </div>
+                        <input type="hidden" id="signup-pin">
+                    </div>
+
+                    <button class="btn btn-primary" id="signup-btn">Send OTP to Admin</button>
+                </div>
+
+                <!-- OTP VERIFY -->
+                <div class="otp-section" id="otp-section">
+                    <h2 class="form-title">Admin OTP Verification</h2>
+                    <div id="otp-message"></div>
+
+                    <div class="admin-call-instruction">
+                        <h3>Check your Email for OTP</h3>
+                        <p><strong>OTP has been sent to: <span id="admin-email-display"></span></strong></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="otp-input">Enter OTP from Admin</label>
+                        <div class="otp-inputs" id="otp-inputs">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                            <input type="text" maxlength="1" class="otp-digit">
+                        </div>
+                        <input type="hidden" id="otp-input">
+                    </div>
+
+                    <button class="btn btn-primary" id="verify-otp-btn">Verify OTP & Create Account</button>
+                    <button class="btn btn-secondary" id="back-btn">Back to Sign Up</button>
+
+                    <div class="resend-otp">
+                        <a href="#" id="resend-otp-link">Resend OTP to Admin</a>
+                    </div>
+                </div>
+
+                <!-- FORGOT -->
+                <div class="form" id="forgot-password-form">
+                    <h2 class="form-title">Reset PIN</h2>
+                    <div id="reset-message"></div>
+
+                    <div class="form-group">
+                        <label for="reset-email">Email</label>
+                        <input type="email" id="reset-email" class="form-control" placeholder="Enter your email">
+                    </div>
+
+                    <button class="btn btn-primary" id="reset-pin-btn">Send Reset OTP to Admin</button>
+                    <button class="btn btn-secondary" id="back-to-login-btn">Back to Login</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase 10 CDN Imports (modular JS) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            updateProfile,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+            getDatabase,
+            ref,
+            set,
+            get,
+            update
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // ========== FIREBASE CONFIG ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3VgNQ_w0A5NEiFrEqBbCgbkH1uK_2qcM",
+            authDomain: "one-stop-shop-676f9.firebaseapp.com",
+            databaseURL: "https://one-stop-shop-676f9-default-rtdb.firebaseio.com",
+            projectId: "one-stop-shop-676f9",
+            storageBucket: "one-stop-shop-676f9.firebasestorage.app",
+            messagingSenderId: "105516341313",
+            appId: "1:105516341313:web:0e907ea8ec17852a72cec0",
+            measurementId: "G-QGBQW3Z61Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Expose helpers under window.firebaseAuth for the rest of the script to use
+        window.firebaseAuth = {
+            auth,
+            db,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            updateProfile,
+            onAuthStateChanged,
+            ref,
+            set,
+            get,
+            update
+        };
+
+        console.log("Firebase initialized successfully");
+    </script>
+
+    <!-- MAIN SCRIPT (keeps your UI + fixed logic) -->
+    <script>
+        (function () {
+            // -----------------------
+            // DOM refs
+            // -----------------------
+            const merchantBtn = document.getElementById('merchant-btn');
+            const adminBtn = document.getElementById('admin-btn');
+            const loginToggle = document.getElementById('login-toggle');
+            const signupToggle = document.getElementById('signup-toggle');
+
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const otpSection = document.getElementById('otp-section');
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const verifyOtpBtn = document.getElementById('verify-otp-btn');
+            const resetPinBtn = document.getElementById('reset-pin-btn');
+
+            const backBtn = document.getElementById('back-btn');
+            const backToLoginBtn = document.getElementById('back-to-login-btn');
+
+            const forgotPasswordLink = document.getElementById('forgot-password-link');
+            const resendOtpLink = document.getElementById('resend-otp-link');
+
+            const loginPinField = document.getElementById('login-pin');
+            const signupPinField = document.getElementById('signup-pin');
+            const otpField = document.getElementById('otp-input');
+
+            const loginMessage = document.getElementById('login-message');
+            const signupMessage = document.getElementById('signup-message');
+            const otpMessage = document.getElementById('otp-message');
+            const resetMessage = document.getElementById('reset-message');
+
+            const signupUsernameEl = document.getElementById('signup-username');
+            const loginUsernameEl = document.getElementById('login-username');
+            
+            // Email fields
+            const loginEmailEl = document.getElementById('login-email');
+            const signupEmailEl = document.getElementById('signup-email');
+            const resetEmailEl = document.getElementById('reset-email');
+            const adminEmailDisplay = document.getElementById('admin-email-display');
+
+            // pin digit containers (selectors)
+            const loginPinDigitsSelector = '#login-pin-inputs .pin-digit';
+            const signupPinDigitsSelector = '#signup-pin-inputs .pin-digit';
+            const otpDigitsSelector = '#otp-inputs .otp-digit';
+
+            // state
+            let currentRole = 'merchant'; // merchant | admin
+            let tempUsername = '';
+            let tempPin = '';
+            let tempEmail = '';
+            let generatedOtp = '';
+
+            // -----------------------
+            // helpers
+            // -----------------------
+            function showMessage(container, msg, type = 'info') {
+                container.innerHTML = `<div class="message ${type}">${msg}</div>`;
+            }
+            function clearAllMessages() {
+                loginMessage.innerHTML = '';
+                signupMessage.innerHTML = '';
+                otpMessage.innerHTML = '';
+                resetMessage.innerHTML = '';
+            }
+
+            // keyboard + focus helper for pin inputs
+            function setupPinInputs(selector, hiddenField) {
+                const digits = Array.from(document.querySelectorAll(selector));
+                digits.forEach((d, i) => {
+                    d.addEventListener('input', (e) => {
+                        d.value = d.value.replace(/[^0-9]/g, '').slice(0,1);
+                        if (d.value && i < digits.length - 1) digits[i+1].focus();
+                        updateHidden();
+                    });
+                    d.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && d.value === '' && i > 0) digits[i-1].focus();
+                    });
+                    // Improve touch experience on mobile
+                    d.addEventListener('touchstart', function() {
+                        this.focus();
+                    });
+                });
+                function updateHidden() {
+                    let s = '';
+                    digits.forEach(x => s += (x.value || ''));
+                    hiddenField.value = s;
+                }
+            }
+
+            setupPinInputs(loginPinDigitsSelector, loginPinField);
+            setupPinInputs(signupPinDigitsSelector, signupPinField);
+            setupPinInputs(otpDigitsSelector, otpField);
+
+            function genOtp() {
+                return Math.floor(100000 + Math.random() * 900000).toString();
+            }
+
+            // -----------------------
+            // Role selection & toggles
+            // -----------------------
+            merchantBtn.addEventListener('click', () => {
+                merchantBtn.classList.add('active');
+                adminBtn.classList.remove('active');
+                currentRole = 'merchant';
+                clearAllMessages();
+            });
+            adminBtn.addEventListener('click', () => {
+                adminBtn.classList.add('active');
+                merchantBtn.classList.remove('active');
+                currentRole = 'admin';
+                clearAllMessages();
+            });
+
+            loginToggle.addEventListener('click', () => {
+                loginToggle.classList.add('active');
+                signupToggle.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                otpSection.classList.remove('active');
+                forgotPasswordForm.classList.remove('active');
+                clearAllMessages();
+            });
+            signupToggle.addEventListener('click', () => {
+                signupToggle.classList.add('active');
+                loginToggle.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                otpSection.classList.remove('active');
+                forgotPasswordForm.classList.remove('active');
+                clearAllMessages();
+            });
+
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginForm.classList.remove('active');
+                signupForm.classList.remove('active');
+                otpSection.classList.remove('active');
+                forgotPasswordForm.classList.add('active');
+                clearAllMessages();
+            });
+
+            backBtn.addEventListener('click', () => {
+                otpSection.classList.remove('active');
+                signupForm.classList.add('active');
+                clearAllMessages();
+            });
+            backToLoginBtn.addEventListener('click', () => {
+                forgotPasswordForm.classList.remove('active');
+                loginForm.classList.add('active');
+                loginToggle.classList.add('active');
+                signupToggle.classList.remove('active');
+                clearAllMessages();
+            });
+
+            // -----------------------
+            // SIGNUP flow: generate OTP, save to DB, send via EmailJS
+            // -----------------------
+            signupBtn.addEventListener('click', async () => {
+                // basic validations
+                const email = (signupEmailEl.value || '').trim();
+                const username = (signupUsernameEl.value || '').trim();
+                const pin = (signupPinField.value || '').trim();
+
+                if (!email) {
+                    showMessage(signupMessage, 'Please enter your email', 'error');
+                    return;
+                }
+                if (!username) {
+                    showMessage(signupMessage, 'Please enter a username', 'error');
+                    return;
+                }
+                if (pin.length !== 6) {
+                    showMessage(signupMessage, 'Please enter a 6-digit PIN', 'error');
+                    return;
+                }
+
+                // check username uniqueness
+                try {
+                    showMessage(signupMessage, 'Checking username and sending OTP...', 'info');
+                    const usersRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'users');
+                    const snap = await window.firebaseAuth.get(usersRef);
+                    if (snap.exists()) {
+                        const users = snap.val();
+                        for (let uid in users) {
+                            if (users[uid].username === username) {
+                                showMessage(signupMessage, 'Username already exists. Choose another.', 'error');
+                                return;
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('username check error', err);
+                    showMessage(signupMessage, 'Error checking username. Try again.', 'error');
+                    return;
+                }
+
+                // create OTP and save in DB under otps/otp_<code>
+                generatedOtp = genOtp();
+                tempUsername = username;
+                tempPin = pin;
+                tempEmail = email;
+                const otpKey = 'otp_' + generatedOtp;
+
+                try {
+                    await window.firebaseAuth.set(
+                        window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + otpKey),
+                        {
+                            username: tempUsername,
+                            role: currentRole,
+                            pin: tempPin,
+                            email: tempEmail,
+                            createdAt: new Date().toISOString(),
+                            used: false
+                        }
+                    );
+                } catch (err) {
+                    console.error('DB save otp error', err);
+                    showMessage(signupMessage, 'Failed to save OTP. Try again.', 'error');
+                    return;
+                }
+
+                // send email via EmailJS
+                try {
+                    const templateParams = {
+                        to_email: tempEmail,
+                        from_name: 'Secure Access Portal',
+                        username: tempUsername,
+                        role: currentRole,
+                        otp_code: generatedOtp,
+                        reply_to: tempEmail
+                    };
+
+                    await emailjs.send('service_lhfe8dg', 'template_1h3z4ix', templateParams);
+
+                    showMessage(signupMessage, `✅ OTP sent to admin. OTP: ${generatedOtp} (admin email) — call admin to get the code`, 'success');
+
+                    // Update the email display in OTP section
+                    adminEmailDisplay.textContent = tempEmail;
+                    
+                    // show OTP screen
+                    setTimeout(() => {
+                        signupForm.classList.remove('active');
+                        otpSection.classList.add('active');
+                        clearAllMessages();
+                        showMessage(otpMessage, 'Enter the 6-digit OTP provided by admin', 'info');
+                    }, 1200);
+                } catch (err) {
+                    console.error('EmailJS send error', err);
+                    showMessage(signupMessage, 'Failed to send OTP email. Check EmailJS configuration.', 'error');
+                }
+            });
+
+            // -----------------------
+            // RESEND OTP
+            // -----------------------
+            resendOtpLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!tempUsername || !tempPin || !tempEmail) {
+                    showMessage(otpMessage, 'Please submit signup form again before resending', 'error');
+                    return;
+                }
+                generatedOtp = genOtp();
+                const otpKey = 'otp_' + generatedOtp;
+                try {
+                    await window.firebaseAuth.set(
+                        window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + otpKey),
+                        {
+                            username: tempUsername,
+                            role: currentRole,
+                            pin: tempPin,
+                            email: tempEmail,
+                            createdAt: new Date().toISOString(),
+                            used: false
+                        }
+                    );
+                    await emailjs.send('service_lhfe8dg', 'template_1h3z4ix', {
+                        to_email: tempEmail,
+                        from_name: 'Secure Access Portal',
+                        username: tempUsername,
+                        role: currentRole,
+                        otp_code: generatedOtp,
+                        reply_to: tempEmail
+                    });
+                    showMessage(otpMessage, `✅ New OTP sent to admin. New OTP: ${generatedOtp}`, 'success');
+                } catch (err) {
+                    console.error('resend error', err);
+                    showMessage(otpMessage, 'Failed to resend OTP', 'error');
+                }
+            });
+
+            // -----------------------
+            // VERIFY OTP & CREATE USER
+            // -----------------------
+            verifyOtpBtn.addEventListener('click', async () => {
+                const enteredOtp = (otpField.value || '').trim();
+                if (enteredOtp.length !== 6) {
+                    showMessage(otpMessage, 'Enter the 6-digit OTP', 'error');
+                    return;
+                }
+                const otpKey = 'otp_' + enteredOtp;
+                try {
+                    const otpRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + otpKey);
+                    const snap = await window.firebaseAuth.get(otpRef);
+                    if (!snap.exists()) {
+                        showMessage(otpMessage, 'Invalid or expired OTP', 'error');
+                        return;
+                    }
+                    const data = snap.val();
+                    if (data.used) {
+                        showMessage(otpMessage, 'OTP already used', 'error');
+                        return;
+                    }
+                    // mark used
+                    await window.firebaseAuth.update(otpRef, { used: true });
+
+                    // create Firebase auth user
+                    const autoEmail = `user_${Date.now()}_${tempUsername}@onestopshop.com`;
+                    const password = 'pin_' + tempPin; // note: production you should force stronger storage/flow
+
+                    const cred = await window.firebaseAuth.createUserWithEmailAndPassword(window.firebaseAuth.auth, autoEmail, password);
+
+                    // update displayName
+                    await window.firebaseAuth.updateProfile(cred.user, { displayName: tempUsername });
+
+                    // save to DB under users/<uid>
+                    await window.firebaseAuth.set(
+                        window.firebaseAuth.ref(window.firebaseAuth.db, 'users/' + cred.user.uid),
+                        {
+                            username: tempUsername,
+                            pin: tempPin,
+                            role: currentRole,
+                            email: tempEmail,
+                            createdAt: new Date().toISOString(),
+                            status: 'active'
+                        }
+                    );
+
+                    showMessage(otpMessage, '✅ Account created successfully! Redirecting to login...', 'success');
+
+                    setTimeout(() => {
+                        // clear forms & show login
+                        otpSection.classList.remove('active');
+                        loginForm.classList.add('active');
+                        loginToggle.classList.add('active');
+                        signupToggle.classList.remove('active');
+                        // clear inputs
+                        signupEmailEl.value = '';
+                        signupUsernameEl.value = '';
+                        document.querySelectorAll('#signup-pin-inputs .pin-digit').forEach(i => i.value = '');
+                        document.querySelectorAll('#otp-inputs .otp-digit').forEach(i => i.value = '');
+                        otpField.value = '';
+                    }, 1200);
+
+                } catch (err) {
+                    console.error('verify/create error', err);
+                    showMessage(otpMessage, 'Failed to verify OTP or create account. See console.', 'error');
+                }
+            });
+
+            // -----------------------
+            // LOGIN (email + username + pin + role)
+            // -----------------------
+            loginBtn.addEventListener('click', async () => {
+                const email = (loginEmailEl.value || '').trim();
+                const username = (loginUsernameEl.value || '').trim();
+                const pin = (loginPinField.value || '').trim();
+
+                if (!email) {
+                    showMessage(loginMessage, 'Enter your email', 'error');
+                    return;
+                }
+                if (!username) {
+                    showMessage(loginMessage, 'Enter username', 'error');
+                    return;
+                }
+                if (pin.length !== 6) {
+                    showMessage(loginMessage, 'Enter a 6-digit PIN', 'error');
+                    return;
+                }
+
+                try {
+                    const usersRef = window.firebaseAuth.ref(window.firebaseAuth.db, 'users');
+                    const snap = await window.firebaseAuth.get(usersRef);
+                    if (!snap.exists()) {
+                        showMessage(loginMessage, 'No users found', 'error');
+                        return;
+                    }
+                    const users = snap.val();
+                    let found = null;
+                    for (let uid in users) {
+                        const u = users[uid];
+                        if (u.username === username && u.pin === pin && u.role === currentRole && u.email === email) {
+                            found = { uid, ...u };
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        showMessage(loginMessage, 'Invalid credentials or wrong role', 'error');
+                        document.querySelectorAll('#login-pin-inputs .pin-digit').forEach(i => i.value = '');
+                        loginPinField.value = '';
+                        return;
+                    }
+
+                    showMessage(loginMessage, 'Login successful! Redirecting...', 'success');
+
+                    // redirect mapping (as you requested)
+                    setTimeout(() => {
+                        if (currentRole === 'merchant') {
+                            window.location.href = 'admin.html';
+                        } else if (currentRole === 'admin') {
+                            window.location.href = 'superadmin.html';
+                        } else {
+                            window.location.href = 'admin.html';
+                        }
+                    }, 900);
+                } catch (err) {
+                    console.error('login error', err);
+                    showMessage(loginMessage, 'Login failed. See console.', 'error');
+                }
+            });
+
+            // -----------------------
+            // RESET (simple flow - sends OTP to admin)
+            // -----------------------
+            resetPinBtn.addEventListener('click', async () => {
+                const email = (resetEmailEl.value || '').trim();
+                
+                if (!email) {
+                    showMessage(resetMessage, 'Please enter your email', 'error');
+                    return;
+                }
+                
+                // For now: just send an OTP to admin (same as signup) and admin will call back
+                const otp = genOtp();
+                try {
+                    await window.firebaseAuth.set(
+                        window.firebaseAuth.ref(window.firebaseAuth.db, 'otps/' + 'otp_' + otp),
+                        {
+                            username: 'reset_request',
+                            role: 'reset',
+                            pin: '',
+                            email: email,
+                            createdAt: new Date().toISOString(),
+                            used: false
+                        }
+                    );
+                    await emailjs.send('service_lhfe8dg', 'template_1h3z4ix', {
+                        to_email: email,
+                        from_name: 'Secure Access Portal - Reset',
+                        username: 'Reset request',
+                        role: 'reset',
+                        otp_code: otp,
+                        reply_to: email
+                    });
+                    showMessage(resetMessage, 'Reset OTP sent to admin. Admin will assist you.', 'success');
+                } catch (err) {
+                    console.error('reset error', err);
+                    showMessage(resetMessage, 'Failed to send reset OTP', 'error');
+                }
+            });
+
+            // On load debug
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('UI ready - EmailJS + Firebase (Realtime DB) active. Users can now enter their own email addresses.');
+            });
+
+        })();
+    </script>
+</body>
+</html>

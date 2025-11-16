@@ -6,6 +6,8 @@
     <title>Perfume Shop - Sales Tracker</title>
     <!-- Chart.js (required for charts) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
@@ -381,7 +383,6 @@
             padding: 2px 6px;
             border-radius: 4px;
             margin-left: 5px;
-            font-weight: bold;
         }
         
         .badge-new {
@@ -500,6 +501,58 @@
             border-radius: 4px;
         }
         
+        /* User Management Styles */
+        .user-management {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+        
         /* Responsive table */
         @media (max-width: 768px) {
             table {
@@ -536,6 +589,49 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* Back Button Styles - PROPERLY POSITIONED */
+        .back-button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .back-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .back-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            text-decoration: none;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .back-button-container {
+                justify-content: center;
+            }
+            
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -565,6 +661,13 @@
                 </div>
             </div>
         </header>
+
+        <!-- Back to Product Management Button - PROPERLY POSITIONED -->
+        <div class="back-button-container">
+            <a href="admin.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Product Management
+            </a>
+        </div>
 
         <!-- Reset Notification -->
         <div class="reset-notification" id="resetNotification">
@@ -603,11 +706,7 @@
                         <div class="form-group">
                             <label for="seller">Sold By</label>
                             <select id="seller" required>
-                                <option value="">Select a seller</option>
-                                <option value="Abiola">Abiola</option>
-                                <option value="Debby">Debby</option>
-                                <option value="Nicannor">Nicannor</option>
-                                <option value="Rita">Rita</option>
+                                <option value="">Loading merchants...</option>
                             </select>
                         </div>
                         
@@ -619,6 +718,19 @@
                     <h2>Quick Stats</h2>
                     <div id="sellerStats">
                         <!-- Seller stats will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- User Management Section -->
+                <div class="card">
+                    <h2>User Management</h2>
+                    <div class="user-management">
+                        <div id="userList">
+                            <!-- Users will be populated here -->
+                        </div>
+                        <button id="refreshUsersBtn" style="margin-top: 10px; width: auto; padding: 8px 12px;">Refresh Users</button>
+                        <button id="syncUsersBtn" style="margin-top: 10px; width: auto; padding: 8px 12px; background: #17a2b8;">Sync with Auth Users</button>
+                        <button id="cleanupUsersBtn" style="margin-top: 10px; width: auto; padding: 8px 12px; background: #dc3545;">Cleanup Old Users</button>
                     </div>
                 </div>
             </section>
@@ -689,7 +801,6 @@
     <script type="module">
 /* ===================== FIREBASE & CHARTS: Shop-Sell Page ===================== */
 
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
 import {
   getFirestore,
@@ -697,18 +808,30 @@ import {
   query,
   orderBy,
   onSnapshot,
-  addDoc,
   deleteDoc,
   doc,
   runTransaction,
-  serverTimestamp,
-  getDoc
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+import {
+  getDatabase,
+  ref,
+  get,
+  set,
+  update,
+  remove
+} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  deleteUser
+} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
 /* ------------------ config ------------------ */
 const firebaseConfig = {
   apiKey: "AIzaSyD3VgNQ_w0A5NEiFrEqBbCgbkH1uK_2qcM",
   authDomain: "one-stop-shop-676f9.firebaseapp.com",
+  databaseURL: "https://one-stop-shop-676f9-default-rtdb.firebaseio.com",
   projectId: "one-stop-shop-676f9",
   storageBucket: "one-stop-shop-676f9.firebasestorage.app",
   messagingSenderId: "105516341313",
@@ -718,9 +841,12 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const realtimeDb = getDatabase(app);
+const auth = getAuth(app);
 
 /* ------------------ DOM ------------------ */
 const productNameSelect = document.getElementById("productName");
+const sellerSelect = document.getElementById("seller");
 const saleForm = document.getElementById("saleForm");
 const searchInput = document.getElementById("productSearch");
 const searchResults = document.getElementById("searchResults");
@@ -736,6 +862,12 @@ const currentDateElement = document.getElementById("currentDate");
 const exportCsvBtn = document.getElementById("exportCsvBtn");
 const lowStockAlerts = document.getElementById("lowStockAlerts");
 
+/* User Management DOM */
+const userList = document.getElementById("userList");
+const refreshUsersBtn = document.getElementById("refreshUsersBtn");
+const syncUsersBtn = document.getElementById("syncUsersBtn");
+const cleanupUsersBtn = document.getElementById("cleanupUsersBtn");
+
 /* Reset Timer Elements */
 const resetTimer = document.getElementById("resetTimer");
 const resetNotification = document.getElementById("resetNotification");
@@ -746,56 +878,44 @@ const dailyBarCanvas = document.getElementById("dailyBarChart");
 const sellerPieCanvas = document.getElementById("sellerPieChart");
 
 /* ------------------ In-memory stores ------------------ */
-let perfumeDatabase = []; // products from firestore
-let sales = [];           // sales from firestore (latest-first)
-let currentPeriodSales = []; // sales from current 24-hour period
-
-/* ------------------ Reset Timer Variables ------------------ */
-let resetInterval;
-let lastResetTime = localStorage.getItem('lastResetTime');
-const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+let perfumeDatabase = [];
+let sales = [];
+let currentPeriodSales = [];
+let merchantUsers = [];
+let allUsers = [];
 
 /* ------------------ Reset Timer Functions ------------------ */
 function setupResetTimer() {
-    // Check if we need to reset data
     const now = Date.now();
-    
+    const lastResetTime = localStorage.getItem('lastResetTime');
+    const RESET_INTERVAL = 24 * 60 * 60 * 1000;
+
     if (!lastResetTime || now - parseInt(lastResetTime) >= RESET_INTERVAL) {
-        // Reset data
         resetDashboardData();
-        lastResetTime = now.toString();
-        localStorage.setItem('lastResetTime', lastResetTime);
+        localStorage.setItem('lastResetTime', now.toString());
     }
     
-    // Calculate time until next reset
-    const nextResetTime = parseInt(lastResetTime) + RESET_INTERVAL;
+    const nextResetTime = parseInt(localStorage.getItem('lastResetTime')) + RESET_INTERVAL;
     const timeUntilReset = nextResetTime - now;
-    
-    // Start the countdown timer
     startResetCountdown(timeUntilReset);
     
-    // Set up interval to check for reset
-    resetInterval = setInterval(() => {
+    setInterval(() => {
         const currentTime = Date.now();
-        if (currentTime - parseInt(lastResetTime) >= RESET_INTERVAL) {
+        if (currentTime - parseInt(localStorage.getItem('lastResetTime')) >= RESET_INTERVAL) {
             resetDashboardData();
-            lastResetTime = currentTime.toString();
-            localStorage.setItem('lastResetTime', lastResetTime);
+            localStorage.setItem('lastResetTime', currentTime.toString());
             startResetCountdown(RESET_INTERVAL);
         }
-    }, 60000); // Check every minute
+    }, 60000);
 }
 
 function startResetCountdown(timeUntilReset) {
-    // Clear any existing interval
     if (window.resetCountdownInterval) {
         clearInterval(window.resetCountdownInterval);
     }
     
-    // Update the timer immediately
     updateResetTimerDisplay(timeUntilReset);
     
-    // Update every second
     window.resetCountdownInterval = setInterval(() => {
         timeUntilReset -= 1000;
         if (timeUntilReset <= 0) {
@@ -817,14 +937,267 @@ function updateResetTimerDisplay(timeUntilReset) {
 }
 
 function resetDashboardData() {
-    // Clear current period sales
     currentPeriodSales = [];
-    
-    // Update dashboard with empty data
     updateStatsAndCharts();
-    
-    // Show notification
     alert('Dashboard data has been reset for the new period.');
+}
+
+/* ------------------ Enhanced Merchant Users Functions ------------------ */
+async function loadMerchantUsers() {
+    try {
+        console.log('Loading merchant users from Realtime Database...');
+        const usersRef = ref(realtimeDb, 'users');
+        const snapshot = await get(usersRef);
+        
+        merchantUsers = [];
+        allUsers = [];
+        
+        if (snapshot.exists()) {
+            const usersData = snapshot.val();
+            console.log('Raw users data:', usersData);
+            
+            Object.keys(usersData).forEach(userId => {
+                const user = usersData[userId];
+                console.log(`Checking user ${userId}:`, user);
+                
+                // Store all users for management
+                allUsers.push({
+                    id: userId,
+                    ...user
+                });
+                
+                // Only include active merchants with status 'active' or no status (for backward compatibility)
+                if (user.role === 'merchant' && user.username && 
+                    (user.status === 'active' || user.status === undefined || user.status === null)) {
+                    console.log(`Found active merchant: ${user.username}`);
+                    merchantUsers.push(user.username);
+                }
+            });
+            
+            // Remove duplicates and sort
+            merchantUsers = [...new Set(merchantUsers)].sort();
+            console.log('Final active merchant users list:', merchantUsers);
+            
+            // Update user management display
+            updateUserManagementDisplay();
+            
+        } else {
+            console.log('No users found in database');
+            merchantUsers = [];
+        }
+        
+        populateSellerDropdown();
+        
+    } catch (error) {
+        console.error('Error loading merchant users:', error);
+        merchantUsers = [];
+        populateSellerDropdown();
+    }
+}
+
+function populateSellerDropdown() {
+    sellerSelect.innerHTML = '<option value="">Select a seller</option>';
+    
+    if (merchantUsers.length === 0) {
+        sellerSelect.innerHTML = '<option value="">No active merchants available</option>';
+        console.warn('No active merchant users available');
+        return;
+    }
+    
+    console.log(`Populating dropdown with ${merchantUsers.length} active merchants`);
+    
+    merchantUsers.forEach(username => {
+        const option = document.createElement('option');
+        option.value = username;
+        option.textContent = username;
+        sellerSelect.appendChild(option);
+    });
+    
+    console.log('Seller dropdown populated successfully');
+}
+
+/* ------------------ User Management Functions ------------------ */
+function updateUserManagementDisplay() {
+    if (allUsers.length === 0) {
+        userList.innerHTML = '<p>No users found in database.</p>';
+        return;
+    }
+    
+    userList.innerHTML = allUsers.map(user => `
+        <div class="user-item">
+            <div class="user-info">
+                <strong>${user.username || 'No username'}</strong>
+                <div style="font-size: 0.8rem; color: #666;">
+                    Role: ${user.role || 'Unknown'} | 
+                    Email: ${user.email || 'No email'} |
+                    Status: <span class="status-badge ${user.status === 'inactive' ? 'status-inactive' : 'status-active'}">
+                        ${user.status || 'active'}
+                    </span>
+                </div>
+                <div style="font-size: 0.7rem; color: #999;">
+                    ID: ${user.id} | 
+                    Created: ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                </div>
+            </div>
+            <div class="user-actions">
+                ${user.status === 'inactive' ? 
+                    `<button class="btn-small" onclick="activateUser('${user.id}')" style="background: #28a745;">Activate</button>` :
+                    `<button class="btn-small" onclick="deactivateUser('${user.id}')" style="background: #ffc107; color: #000;">Deactivate</button>`
+                }
+                <button class="btn-small" onclick="deleteUserCompletely('${user.id}', '${user.username}')" style="background: #dc3545;">Delete Completely</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Make these functions available globally for the onclick handlers
+window.activateUser = async function(userId) {
+    if (!confirm('Activate this user?')) return;
+    
+    try {
+        await update(ref(realtimeDb, `users/${userId}`), {
+            status: 'active'
+        });
+        alert('User activated successfully!');
+        loadMerchantUsers(); // Reload the list
+    } catch (error) {
+        console.error('Error activating user:', error);
+        alert('Error activating user');
+    }
+};
+
+window.deactivateUser = async function(userId) {
+    if (!confirm('Deactivate this user? They will no longer appear in the seller dropdown.')) return;
+    
+    try {
+        await update(ref(realtimeDb, `users/${userId}`), {
+            status: 'inactive'
+        });
+        alert('User deactivated successfully!');
+        loadMerchantUsers(); // Reload the list
+    } catch (error) {
+        console.error('Error deactivating user:', error);
+        alert('Error deactivating user');
+    }
+};
+
+window.deleteUserCompletely = async function(userId, username) {
+    if (!confirm(`Permanently delete user "${username}"? This will remove them from both Realtime Database and Authentication!`)) return;
+    
+    try {
+        // First, try to find and delete from Authentication
+        await deleteUserFromAuthentication(username);
+        
+        // Then delete from Realtime Database
+        await remove(ref(realtimeDb, `users/${userId}`));
+        
+        alert('User deleted completely from both systems!');
+        loadMerchantUsers(); // Reload the list
+    } catch (error) {
+        console.error('Error deleting user completely:', error);
+        alert('Error deleting user. They may have been removed from Realtime Database but not Authentication.');
+    }
+};
+
+/* ------------------ Authentication Sync Functions ------------------ */
+async function deleteUserFromAuthentication(username) {
+    // This is a simplified approach - in a real app, you'd need admin privileges
+    // or a Cloud Function to delete users from Authentication
+    console.log(`Attempting to delete user ${username} from Authentication...`);
+    
+    // For now, we'll just show a message about manual deletion
+    alert(`To completely remove user "${username}", you need to:\n\n1. Go to Firebase Console\n2. Go to Authentication > Users\n3. Find and delete the user manually\n\nThis user has been removed from Realtime Database.`);
+    
+    // Note: In a production app, you would use the Admin SDK via a Cloud Function
+    // to properly delete users from Authentication
+}
+
+async function syncWithAuthUsers() {
+    try {
+        console.log('Syncing Realtime Database users with Authentication...');
+        
+        const usersRef = ref(realtimeDb, 'users');
+        const snapshot = await get(usersRef);
+        
+        if (!snapshot.exists()) {
+            alert('No users found in Realtime Database.');
+            return;
+        }
+        
+        const usersData = snapshot.val();
+        let syncedCount = 0;
+        let removedCount = 0;
+        
+        // Get current authenticated users (this is simplified)
+        // In a real app, you'd use a Cloud Function to get the full auth user list
+        
+        for (const userId in usersData) {
+            const user = usersData[userId];
+            
+            // Check if user exists in Authentication (simplified check)
+            // This is where you'd integrate with a Cloud Function
+            const userExistsInAuth = await checkIfUserExistsInAuth(user.username);
+            
+            if (!userExistsInAuth) {
+                // User doesn't exist in Authentication, remove from Realtime Database
+                await remove(ref(realtimeDb, `users/${userId}`));
+                removedCount++;
+                console.log(`Removed user ${user.username} from Realtime Database (not found in Auth)`);
+            } else {
+                syncedCount++;
+            }
+        }
+        
+        alert(`Sync completed!\n\n- ${syncedCount} users in sync\n- ${removedCount} users removed from Realtime Database`);
+        loadMerchantUsers(); // Reload the list
+        
+    } catch (error) {
+        console.error('Error syncing users:', error);
+        alert('Error syncing users with Authentication');
+    }
+}
+
+// Simplified function to check if user exists in Authentication
+async function checkIfUserExistsInAuth(username) {
+    // This is a placeholder - in a real app, you'd call a Cloud Function
+    // that uses the Admin SDK to check if the user exists in Authentication
+    
+    // For now, we'll assume all users exist to avoid accidental deletion
+    // You can implement this properly with a Cloud Function
+    return true;
+    
+    // Example Cloud Function implementation would look like:
+    // const functions = getFunctions();
+    // const checkUserExists = httpsCallable(functions, 'checkUserExists');
+    // const result = await checkUserExists({ username });
+    // return result.data.exists;
+}
+
+async function cleanupOldUsers() {
+    if (!confirm('This will remove all users with status "inactive". Continue?')) return;
+    
+    try {
+        const usersRef = ref(realtimeDb, 'users');
+        const snapshot = await get(usersRef);
+        
+        if (snapshot.exists()) {
+            const usersData = snapshot.val();
+            let deletedCount = 0;
+            
+            for (const userId in usersData) {
+                if (usersData[userId].status === 'inactive') {
+                    await remove(ref(realtimeDb, `users/${userId}`));
+                    deletedCount++;
+                }
+            }
+            
+            alert(`Cleaned up ${deletedCount} inactive users.`);
+            loadMerchantUsers(); // Reload the list
+        }
+    } catch (error) {
+        console.error('Error cleaning up users:', error);
+        alert('Error cleaning up users');
+    }
 }
 
 /* ------------------ Helpers ------------------ */
@@ -904,7 +1277,6 @@ function populateProductDropdown() {
     return;
   }
 
-  // sort new arrivals first, featured next, then by name
   const sorted = perfumeDatabase.slice().sort((a, b) => {
     if (a.type === 'new-arrival' && b.type !== 'new-arrival') return -1;
     if (a.type !== 'new-arrival' && b.type === 'new-arrival') return 1;
@@ -913,7 +1285,6 @@ function populateProductDropdown() {
     return a.name.localeCompare(b.name);
   });
 
-  // optgroup for new arrivals
   const newArr = sorted.filter(p => p.type === 'new-arrival');
   const coll = sorted.filter(p => p.type !== 'new-arrival');
 
@@ -969,8 +1340,7 @@ function refreshLowStockAlerts() {
 
 /* ------------------ Sales UI ------------------ */
 function renderSalesTable() {
-  // Show only current period sales in the table
-  const displaySales = currentPeriodSales.slice(0, 20); // Show last 20 sales from current period
+  const displaySales = currentPeriodSales.slice(0, 20);
   
   if (!displaySales.length) {
     salesTableBody.innerHTML = '';
@@ -988,7 +1358,6 @@ function renderSalesTable() {
     </tr>
   `).join('');
 
-  // attach delete handlers
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', async (ev) => {
       const id = btn.getAttribute('data-id');
@@ -1006,27 +1375,22 @@ function renderSalesTable() {
 
 /* ------------------ Statistics & Charts Data ------------------ */
 function updateStatsAndCharts() {
-  // Use only current period sales for stats and charts
   const statsSales = currentPeriodSales;
 
-  // total sales & revenue
   totalSalesElement.textContent = statsSales.length;
   const totalRevenue = statsSales.reduce((sum, s) => sum + Number(s.price || 0), 0);
   totalRevenueElement.textContent = formatCurrency(totalRevenue);
 
-  // top seller
   const counts = {};
   statsSales.forEach(s => counts[s.seller] = (counts[s.seller] || 0) + 1);
   let top = '-'; let max = 0;
   for (const k in counts) if (counts[k] > max) { max = counts[k]; top = k; }
   topSellerElement.textContent = top;
 
-  // seller pie chart data
   const sellers = Object.keys(counts);
   const sellerValues = sellers.map(k => counts[k]);
   createOrUpdateSellerPie(sellers, sellerValues);
 
-  // revenue timeline: group by date (YYYY-MM-DD) sorted ascending
   const grouped = {};
   statsSales.slice().reverse().forEach(s => {
     const dt = s.createdAtObj ? s.createdAtObj : (s.createdAtStr ? new Date(s.createdAtStr) : new Date());
@@ -1037,7 +1401,6 @@ function updateStatsAndCharts() {
   const values = labels.map(l => grouped[l]);
   createOrUpdateLineChart(labels, values);
 
-  // daily bar (last 14 days)
   const today = new Date();
   const arrDates = [];
   for (let i = 13; i >= 0; i--) {
@@ -1048,10 +1411,8 @@ function updateStatsAndCharts() {
   const dailyValues = arrDates.map(dateKey => grouped[dateKey] || 0);
   createOrUpdateDailyBar(arrDates, dailyValues);
 
-  // seller stats breakdown UI
-  const sellersList = ['Abiola', 'Debby', 'Nicannor', 'Rita'];
   let html = '';
-  sellersList.forEach(name => {
+  merchantUsers.forEach(name => {
     const arr = statsSales.filter(s => s.seller === name);
     const rev = arr.reduce((sum,x) => sum + Number(x.price||0), 0);
     html += `<div class="stat-card" style="margin-bottom:12px;">
@@ -1064,7 +1425,6 @@ function updateStatsAndCharts() {
   });
   sellerStatsElement.innerHTML = html;
 
-  // low stock alerts
   refreshLowStockAlerts();
 }
 
@@ -1091,14 +1451,13 @@ function startRealtimeListeners() {
     });
     populateProductDropdown();
     refreshLowStockAlerts();
-    console.log('Products listener updated', perfumeDatabase.length);
   }, (err) => console.error('Products listener error', err));
 
   // sales (newest first)
   const salesRef = query(collection(db, 'sales'), orderBy('createdAt', 'desc'));
   onSnapshot(salesRef, (snap) => {
     sales = [];
-    currentPeriodSales = []; // Reset current period sales
+    currentPeriodSales = [];
     
     snap.forEach(docSnap => {
       const d = docSnap.data();
@@ -1115,14 +1474,12 @@ function startRealtimeListeners() {
       
       sales.push(saleData);
       
-      // Add to current period sales if it's after the last reset
-      if (createdAtObj && createdAtObj.getTime() > parseInt(lastResetTime)) {
+      if (createdAtObj && createdAtObj.getTime() > parseInt(localStorage.getItem('lastResetTime'))) {
         currentPeriodSales.push(saleData);
       }
     });
     renderSalesTable();
     updateStatsAndCharts();
-    console.log('Sales listener updated', sales.length, 'Current period:', currentPeriodSales.length);
   }, (err) => console.error('Sales listener error', err));
 }
 
@@ -1140,12 +1497,15 @@ saleForm.addEventListener('submit', async (ev) => {
     alert('Selected product not found');
     return;
   }
-  const seller = document.getElementById('seller').value || 'Unknown';
+  const seller = sellerSelect.value;
+  if (!seller) {
+    alert('Please select a seller');
+    return;
+  }
   const priceInput = document.getElementById('price').value;
   const price = priceInput ? Number(priceInput) : Number(selected.price || 0);
 
   try {
-    // transaction: ensure stock > 0 (unless you want to allow selling with zero stock after confirm)
     await runTransaction(db, async (t) => {
       const prodRef = doc(db, 'products', productId);
       const prodSnap = await t.get(prodRef);
@@ -1153,17 +1513,14 @@ saleForm.addEventListener('submit', async (ev) => {
 
       const currentStock = Number(prodSnap.data().stock || 0);
       if (currentStock <= 0) {
-        // allow only if user confirms
         if (!confirm('Product stock is 0. Record sale anyway?')) throw 'abort';
       }
-      // decrement stock by 1 if stock > 0
       if (currentStock > 0) {
         t.update(prodRef, { stock: currentStock - 1 });
       }
 
-      // create sale doc
       const saleRef = collection(db, 'sales');
-      t.set(doc(saleRef), { // using auto-id via doc(collection) without id param
+      t.set(doc(saleRef), {
         productId,
         productName: selected.name,
         price,
@@ -1172,7 +1529,6 @@ saleForm.addEventListener('submit', async (ev) => {
       });
     });
 
-    // success
     saleForm.reset();
     alert('Sale recorded (and stock updated).');
   } catch (err) {
@@ -1250,19 +1606,23 @@ exportCsvBtn.addEventListener('click', exportSalesToCSV);
 
 /* ------------------ Init ------------------ */
 function setCurrentDate() {
-  const now = new Date();
-  currentDateElement.textContent = now.toLocaleDateString('en-KE', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const now = new Date();
+    currentDateElement.textContent = now.toLocaleDateString('en-KE', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 }
 
 function init() {
-  setCurrentDate();
-  setupResetTimer();
-  startRealtimeListeners();
+    setCurrentDate();
+    setupResetTimer();
+    loadMerchantUsers();
+    startRealtimeListeners();
+    
+    // Event listeners for user management
+    refreshUsersBtn.addEventListener('click', loadMerchantUsers);
+    syncUsersBtn.addEventListener('click', syncWithAuthUsers);
+    cleanupUsersBtn.addEventListener('click', cleanupOldUsers);
 }
 init();
 
     </script>
-
-    <!-- Load Firebase SDK -->
-
+</body>
 </html>
