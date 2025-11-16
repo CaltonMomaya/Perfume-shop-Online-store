@@ -611,11 +611,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="login-username">Username</label>
-                        <input type="text" id="login-username" class="form-control" placeholder="Enter your username">
-                    </div>
-
-                    <div class="form-group">
                         <label for="login-pin">6-Digit PIN</label>
                         <div class="pin-inputs" id="login-pin-inputs">
                             <input type="password" maxlength="1" class="pin-digit">
@@ -803,7 +798,6 @@
             const resetMessage = document.getElementById('reset-message');
 
             const signupUsernameEl = document.getElementById('signup-username');
-            const loginUsernameEl = document.getElementById('login-username');
             
             // Email fields
             const loginEmailEl = document.getElementById('login-email');
@@ -1131,19 +1125,14 @@
             });
 
             // -----------------------
-            // LOGIN (email + username + pin + role)
+            // LOGIN (email + pin + role)
             // -----------------------
             loginBtn.addEventListener('click', async () => {
                 const email = (loginEmailEl.value || '').trim();
-                const username = (loginUsernameEl.value || '').trim();
                 const pin = (loginPinField.value || '').trim();
 
                 if (!email) {
                     showMessage(loginMessage, 'Enter your email', 'error');
-                    return;
-                }
-                if (!username) {
-                    showMessage(loginMessage, 'Enter username', 'error');
                     return;
                 }
                 if (pin.length !== 6) {
@@ -1162,7 +1151,7 @@
                     let found = null;
                     for (let uid in users) {
                         const u = users[uid];
-                        if (u.username === username && u.pin === pin && u.role === currentRole && u.email === email) {
+                        if (u.pin === pin && u.role === currentRole && u.email === email) {
                             found = { uid, ...u };
                             break;
                         }

@@ -6,7 +6,6 @@
     <title>Product Management | One Stop Shop</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Your exact original CSS styles for the upload form */
         /* Global Styles */
         * {
             margin: 0;
@@ -31,6 +30,9 @@
             background-color: #f5f5f5;
             color: #333;
             line-height: 1.6;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
@@ -44,19 +46,25 @@
         .admin-container {
             display: flex;
             min-height: 100vh;
+            flex-direction: column;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 250px;
+            width: 100%;
             background-color: var(--primary);
             color: white;
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             transition: all 0.3s;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
         .sidebar-header {
-            padding: 0 1.5rem 1.5rem;
+            padding: 0 1rem 1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 1rem;
         }
@@ -73,25 +81,36 @@
 
         .sidebar-menu {
             list-style: none;
+            display: flex;
+            overflow-x: auto;
+            padding: 0 1rem;
+            -webkit-overflow-scrolling: touch;
         }
 
         .sidebar-menu li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0;
+            margin-right: 1rem;
+            flex-shrink: 0;
         }
 
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 1rem;
             color: #ddd;
             text-decoration: none;
             transition: all 0.3s;
+            border-left: none;
+            border-bottom: 4px solid transparent;
+            white-space: nowrap;
+            min-height: 44px;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
             background-color: rgba(255, 255, 255, 0.1);
             color: white;
-            border-left: 4px solid var(--accent);
+            border-left: none;
+            border-bottom: 4px solid var(--accent);
         }
 
         .sidebar-menu i {
@@ -105,31 +124,188 @@
             flex: 1;
             padding: 1.5rem;
             overflow-y: auto;
+            width: 100%;
         }
 
         .dashboard-header {
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #ddd;
+            gap: 1rem;
         }
 
         .dashboard-header h1 {
             color: var(--primary);
+            font-size: 1.8rem;
         }
 
         .user-info {
             display: flex;
             align-items: center;
+            position: relative;
+            width: 100%;
+            justify-content: space-between;
         }
 
+        /* Enhanced Dropdown Styles */
+        .user-dropdown {
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .user-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-dropdown-trigger:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+            min-width: 220px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            z-index: 1000;
+            margin-top: 0.8rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: dropdownFadeIn 0.3s ease forwards;
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-dropdown-content::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+            transform: rotate(45deg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-dropdown-content a {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 14px 18px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .user-dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 22px;
+        }
+
+        .user-dropdown-content a:hover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--accent);
+        }
+
+        .user-dropdown-content a i {
+            margin-right: 12px;
+            width: 18px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        .user-dropdown-content a:hover i {
+            transform: scale(1.1);
+        }
+
+        .user-dropdown.active .user-dropdown-content {
+            display: block;
+        }
+
+        /* Enhanced User Info - Fixed text color */
         .user-info img {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             margin-right: 0.8rem;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .user-dropdown-trigger:hover img {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        /* Fixed text color to black for better visibility */
+        .user-dropdown-trigger p {
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: #000000; /* Changed to black */
+        }
+
+        .user-dropdown-trigger small {
+            color: #333333; /* Changed to dark gray */
+            font-size: 0.8rem;
+        }
+
+        .user-dropdown-trigger .fa-chevron-down {
+            margin-left: 0.8rem;
+            font-size: 0.9rem;
+            color: #333333; /* Changed to dark gray */
+            transition: transform 0.3s ease;
+        }
+
+        .user-dropdown.active .user-dropdown-trigger .fa-chevron-down {
+            transform: rotate(180deg);
+            color: var(--accent);
         }
 
         /* Tabs */
@@ -137,13 +313,22 @@
             display: flex;
             margin-bottom: 1.5rem;
             border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab {
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 1rem;
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+            min-width: 120px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tab.active {
@@ -186,6 +371,7 @@
             border-radius: 4px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            min-height: 44px;
         }
 
         .form-control:focus {
@@ -195,6 +381,7 @@
 
         .form-row {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
         }
 
@@ -215,6 +402,11 @@
             text-align: center;
             transition: all 0.3s;
             cursor: pointer;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .file-upload:hover {
@@ -334,20 +526,24 @@
             display: flex;
             gap: 0.5rem;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             background-color: var(--primary);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.8rem 1.2rem;
             border: none;
             border-radius: 4px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
+            min-height: 44px;
+            width: 100%;
         }
 
         .btn i {
@@ -359,8 +555,10 @@
         }
 
         .btn-sm {
-            padding: 0.4rem 0.8rem;
+            padding: 0.6rem 1rem;
             font-size: 0.8rem;
+            min-height: 36px;
+            width: auto;
         }
 
         .btn-success {
@@ -476,6 +674,11 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: #666;
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal h2 {
@@ -488,6 +691,7 @@
             gap: 1rem;
             margin-top: 1.5rem;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         /* Current Image Preview in Modal */
@@ -551,68 +755,291 @@
             background-color: #2980b9;
         }
 
+        /* Settings Styles */
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .setting-info h4 {
+            margin-bottom: 0.3rem;
+            color: var(--primary);
+        }
+
+        .setting-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Profile Picture Modal */
+        .profile-picture-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-picture-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            display: block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image Upload Section */
+        .image-upload-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .image-upload-section h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .image-option-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .image-option-toggle button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-option-toggle button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .image-upload-container {
+            display: none;
+        }
+
+        .image-upload-container.active {
+            display: block;
+        }
+
+        .image-preview-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            display: block;
+        }
+
         /* Mobile Styles */
-        @media (max-width: 992px) {
+        @media (min-width: 768px) {
             .admin-container {
-                flex-direction: column;
+                flex-direction: row;
             }
-
+            
             .sidebar {
-                width: 100%;
-                padding: 1rem 0;
+                width: 250px;
+                max-height: 100vh;
+                overflow-y: auto;
             }
-
-            .sidebar-header {
-                padding: 0 1rem 1rem;
-            }
-
+            
             .sidebar-menu {
-                display: flex;
-                overflow-x: auto;
-                padding: 0 1rem;
+                display: block;
+                overflow-x: visible;
+                padding: 0;
             }
-
+            
             .sidebar-menu li {
-                margin-bottom: 0;
-                margin-right: 1rem;
+                margin-bottom: 0.5rem;
+                margin-right: 0;
             }
-
+            
             .sidebar-menu a {
-                white-space: nowrap;
-                border-left: none;
-                border-bottom: 4px solid transparent;
+                border-left: 4px solid transparent;
+                border-bottom: none;
+                padding: 0.8rem 1.5rem;
             }
-
+            
             .sidebar-menu a:hover, .sidebar-menu a.active {
-                border-left: none;
-                border-bottom: 4px solid var(--accent);
+                border-left: 4px solid var(--accent);
+                border-bottom: none;
+            }
+            
+            .dashboard-header {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .user-info {
+                width: auto;
+                justify-content: flex-end;
+            }
+            
+            .user-dropdown {
+                width: auto;
+            }
+            
+            .btn {
+                width: auto;
+            }
+            
+            .form-row {
+                flex-direction: row;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
         }
 
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
-                gap: 0;
+        @media (min-width: 992px) {
+            .dashboard-header h1 {
+                font-size: 2rem;
             }
+            
+            .modal-content {
+                width: 80%;
+            }
+        }
 
+        @media (max-width: 480px) {
             .products-grid {
                 grid-template-columns: 1fr;
             }
-
-            .tabs {
-                flex-wrap: wrap;
+            
+            .product-actions {
+                flex-direction: column;
             }
-
+            
+            .btn-sm {
+                width: 100%;
+            }
+            
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
             .tab {
-                flex: 1;
-                text-align: center;
-                min-width: 120px;
+                padding: 0.6rem 0.8rem;
+                min-width: 100px;
             }
+            
+            .sidebar-menu a {
+                padding: 0.6rem 0.8rem;
+            }
+            
+            .user-dropdown-content {
+                right: 0;
+                left: 0;
+                min-width: auto;
+            }
+            
+            .user-dropdown-content::before {
+                right: auto;
+                left: 20px;
+            }
+            
+            .user-dropdown-trigger {
+                padding: 0.6rem 0.8rem;
+            }
+        }
 
-            .modal-content {
-                width: 95%;
-                padding: 1.5rem;
-            }
+        /* Touch-friendly improvements */
+        button, a, input, select, textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        input, select, textarea {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+        
+        /* Prevent text selection on interactive elements */
+        .btn, .tab, .sidebar-menu a {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Improve scrolling performance */
+        .admin-container, .main-content, .sidebar {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -626,8 +1053,6 @@
             </div>
             <ul class="sidebar-menu">
                 <li><a href="#" class="active"><i class="fas fa-box"></i> Product Management</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </div>
 
@@ -636,10 +1061,20 @@
             <div class="dashboard-header">
                 <h1>Product Management</h1>
                 <div class="user-info">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
-                    <div>
-                        <p id="logged-in-username">Loading...</p>
-                        <small>Merchant</small>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <div class="user-dropdown-trigger">
+                            <img id="user-profile-pic" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
+                            <div>
+                                <p id="logged-in-username">Loading...</p>
+                                <small>Merchant</small>
+                            </div>
+                            <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem;"></i>
+                        </div>
+                        <div class="user-dropdown-content">
+                            <a href="#" id="change-profile-pic"><i class="fas fa-user-circle"></i> Change Profile Picture</a>
+                            <a href="#" id="user-settings"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -701,12 +1136,37 @@
                             <textarea id="new-stock-description" class="form-control" required></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label for="new-stock-image">Product Image URL *</label>
-                            <input type="text" id="new-stock-image" class="form-control" 
-                                   value="https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                                   required>
-                            <small style="color: #666;">Use a direct image URL from Unsplash or similar service</small>
+                        <!-- Image Upload Section -->
+                        <div class="image-upload-section">
+                            <h4>Product Image *</h4>
+                            <div class="image-option-toggle">
+                                <button type="button" id="new-stock-url-toggle" class="active">Use Image URL</button>
+                                <button type="button" id="new-stock-upload-toggle">Upload Image</button>
+                            </div>
+                            
+                            <!-- URL Input -->
+                            <div id="new-stock-url-container" class="image-upload-container active">
+                                <input type="text" id="new-stock-image" class="form-control" 
+                                       value="https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                                       required>
+                                <small style="color: #666;">Use a direct image URL from Unsplash or similar service</small>
+                            </div>
+                            
+                            <!-- File Upload -->
+                            <div id="new-stock-upload-container" class="image-upload-container">
+                                <div class="file-upload" id="new-stock-upload-area">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload or drag and drop</p>
+                                    <p style="font-size: 0.8rem;">PNG, JPG, GIF up to 5MB</p>
+                                    <input type="file" id="new-stock-image-file" class="file-input" accept="image/*">
+                                </div>
+                                <div class="image-preview-container" id="new-stock-preview-container" style="display: none;">
+                                    <img id="new-stock-image-preview" class="image-preview" alt="Preview">
+                                    <button type="button" class="btn btn-danger btn-sm" id="new-stock-remove-preview" style="margin-top: 0.5rem;">
+                                        <i class="fas fa-trash"></i> Remove Image
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -764,12 +1224,37 @@
                             <textarea id="collection-product-description" class="form-control" required></textarea>
                         </div>
 
-                        <div class="form-group">
-                            <label for="collection-product-image">Product Image URL *</label>
-                            <input type="text" id="collection-product-image" class="form-control" 
-                                   value="https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                                   required>
-                            <small style="color: #666;">Use a direct image URL from Unsplash or similar service</small>
+                        <!-- Image Upload Section -->
+                        <div class="image-upload-section">
+                            <h4>Product Image *</h4>
+                            <div class="image-option-toggle">
+                                <button type="button" id="collection-url-toggle" class="active">Use Image URL</button>
+                                <button type="button" id="collection-upload-toggle">Upload Image</button>
+                            </div>
+                            
+                            <!-- URL Input -->
+                            <div id="collection-url-container" class="image-upload-container active">
+                                <input type="text" id="collection-product-image" class="form-control" 
+                                       value="https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                                       required>
+                                <small style="color: #666;">Use a direct image URL from Unsplash or similar service</small>
+                            </div>
+                            
+                            <!-- File Upload -->
+                            <div id="collection-upload-container" class="image-upload-container">
+                                <div class="file-upload" id="collection-upload-area">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload or drag and drop</p>
+                                    <p style="font-size: 0.8rem;">PNG, JPG, GIF up to 5MB</p>
+                                    <input type="file" id="collection-product-image-file" class="file-input" accept="image/*">
+                                </div>
+                                <div class="image-preview-container" id="collection-preview-container" style="display: none;">
+                                    <img id="collection-image-preview" class="image-preview" alt="Preview">
+                                    <button type="button" class="btn btn-danger btn-sm" id="collection-remove-preview" style="margin-top: 0.5rem;">
+                                        <i class="fas fa-trash"></i> Remove Image
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -898,13 +1383,147 @@
         </div>
     </div>
 
+    <!-- Profile Picture Modal -->
+    <div class="modal" id="profile-picture-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-profile-modal">&times;</span>
+            <h2>Change Profile Picture</h2>
+            
+            <div class="profile-picture-container">
+                <img id="profile-picture-preview" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Profile Preview" class="profile-picture-preview">
+                <p style="color: #666; margin-bottom: 1rem;">Upload a new profile picture</p>
+            </div>
+            
+            <div class="file-upload" id="profile-upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload or drag and drop</p>
+                <p style="font-size: 0.8rem;">PNG, JPG, GIF up to 5MB</p>
+                <input type="file" id="profile-picture-input" class="file-input" accept="image/*">
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-danger" id="cancel-profile">Cancel</button>
+                <button type="button" class="btn btn-success" id="save-profile-picture">
+                    <i class="fas fa-save"></i> Save Picture
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-settings-modal">&times;</span>
+            <h2>System Settings</h2>
+            
+            <div class="settings-section">
+                <h3>General Settings</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Email Notifications</h4>
+                        <p>Receive email alerts for low stock and new orders</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="email-notifications" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Auto Stock Update</h4>
+                        <p>Automatically update stock when products are sold</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="auto-stock-update" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Low Stock Alerts</h4>
+                        <p>Get notifications when product stock is low</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="low-stock-alerts" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Sales Settings</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Tax Rate (%)</h4>
+                        <p>Set the default tax rate for all sales</p>
+                    </div>
+                    <input type="number" id="tax-rate" class="form-control" min="0" max="50" step="0.1" value="16" style="width: 100px;">
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Currency</h4>
+                        <p>Set the default currency for your store</p>
+                    </div>
+                    <select id="currency" class="form-control" style="width: 150px;">
+                        <option value="KES" selected>KES - Kenyan Shilling</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Security Settings</h3>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Two-Factor Authentication</h4>
+                        <p>Add an extra layer of security to your account</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="two-factor-auth">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h4>Session Timeout</h4>
+                        <p>Automatically log out after period of inactivity</p>
+                    </div>
+                    <select id="session-timeout" class="form-control" style="width: 150px;">
+                        <option value="15">15 minutes</option>
+                        <option value="30" selected>30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="120">2 hours</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="btn btn-danger" id="reset-settings">
+                    <i class="fas fa-undo"></i> Reset to Defaults
+                </button>
+                <button class="btn btn-success" id="save-settings">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -935,15 +1554,61 @@
         const searchInput = document.getElementById('search-products');
         const openCounterBtn = document.getElementById('open-counter');
         const loggedInUsername = document.getElementById('logged-in-username');
+        const userProfilePic = document.getElementById('user-profile-pic');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const changeProfilePic = document.getElementById('change-profile-pic');
+        const userSettingsBtn = document.getElementById('user-settings');
+        const userDropdown = document.getElementById('user-dropdown');
         
         // Edit Modal Elements
         const editProductModal = document.getElementById('edit-product-modal');
         const editProductForm = document.getElementById('edit-product-form');
         const closeEditModal = document.getElementById('close-edit-modal');
         const cancelEdit = document.getElementById('cancel-edit');
+        
+        // Profile Picture Modal Elements
+        const profilePictureModal = document.getElementById('profile-picture-modal');
+        const closeProfileModal = document.getElementById('close-profile-modal');
+        const cancelProfile = document.getElementById('cancel-profile');
+        const profileUploadArea = document.getElementById('profile-upload-area');
+        const profilePictureInput = document.getElementById('profile-picture-input');
+        const profilePicturePreview = document.getElementById('profile-picture-preview');
+        const saveProfilePicture = document.getElementById('save-profile-picture');
+        
+        // Settings Modal Elements
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsModal = document.getElementById('close-settings-modal');
+        const saveSettingsBtn = document.getElementById('save-settings');
+        const resetSettingsBtn = document.getElementById('reset-settings');
+
+        // Image Upload Elements - New Stock
+        const newStockUrlToggle = document.getElementById('new-stock-url-toggle');
+        const newStockUploadToggle = document.getElementById('new-stock-upload-toggle');
+        const newStockUrlContainer = document.getElementById('new-stock-url-container');
+        const newStockUploadContainer = document.getElementById('new-stock-upload-container');
+        const newStockUploadArea = document.getElementById('new-stock-upload-area');
+        const newStockImageFile = document.getElementById('new-stock-image-file');
+        const newStockPreviewContainer = document.getElementById('new-stock-preview-container');
+        const newStockImagePreview = document.getElementById('new-stock-image-preview');
+        const newStockRemovePreview = document.getElementById('new-stock-remove-preview');
+
+        // Image Upload Elements - Collection
+        const collectionUrlToggle = document.getElementById('collection-url-toggle');
+        const collectionUploadToggle = document.getElementById('collection-upload-toggle');
+        const collectionUrlContainer = document.getElementById('collection-url-container');
+        const collectionUploadContainer = document.getElementById('collection-upload-container');
+        const collectionUploadArea = document.getElementById('collection-upload-area');
+        const collectionImageFile = document.getElementById('collection-product-image-file');
+        const collectionPreviewContainer = document.getElementById('collection-preview-container');
+        const collectionImagePreview = document.getElementById('collection-image-preview');
+        const collectionRemovePreview = document.getElementById('collection-remove-preview');
 
         // Store products for real-time updates
         let allProducts = [];
+        let currentUser = null;
+        let selectedProfilePicture = null;
+        let newStockSelectedImage = null;
+        let collectionSelectedImage = null;
 
         // Initialize the dashboard
         function initDashboard() {
@@ -953,6 +1618,121 @@
             setupTabs();
             setupRealtimeListener();
             setupModalEvents();
+            loadSettings();
+            setupImageUploads();
+        }
+
+        // Setup image upload functionality
+        function setupImageUploads() {
+            // New Stock Image Upload Toggle
+            newStockUrlToggle.addEventListener('click', () => {
+                newStockUrlToggle.classList.add('active');
+                newStockUploadToggle.classList.remove('active');
+                newStockUrlContainer.classList.add('active');
+                newStockUploadContainer.classList.remove('active');
+                newStockImageFile.required = false;
+                document.getElementById('new-stock-image').required = true;
+            });
+
+            newStockUploadToggle.addEventListener('click', () => {
+                newStockUploadToggle.classList.add('active');
+                newStockUrlToggle.classList.remove('active');
+                newStockUploadContainer.classList.add('active');
+                newStockUrlContainer.classList.remove('active');
+                document.getElementById('new-stock-image').required = false;
+                newStockImageFile.required = true;
+            });
+
+            // Collection Image Upload Toggle
+            collectionUrlToggle.addEventListener('click', () => {
+                collectionUrlToggle.classList.add('active');
+                collectionUploadToggle.classList.remove('active');
+                collectionUrlContainer.classList.add('active');
+                collectionUploadContainer.classList.remove('active');
+                collectionImageFile.required = false;
+                document.getElementById('collection-product-image').required = true;
+            });
+
+            collectionUploadToggle.addEventListener('click', () => {
+                collectionUploadToggle.classList.add('active');
+                collectionUrlToggle.classList.remove('active');
+                collectionUploadContainer.classList.add('active');
+                collectionUrlContainer.classList.remove('active');
+                document.getElementById('collection-product-image').required = false;
+                collectionImageFile.required = true;
+            });
+
+            // New Stock File Upload
+            newStockUploadArea.addEventListener('click', () => {
+                newStockImageFile.click();
+            });
+
+            newStockImageFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB limit)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert(errorAlert, 'File size must be less than 5MB');
+                        return;
+                    }
+                    
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        showAlert(errorAlert, 'Please select an image file');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        newStockSelectedImage = e.target.result;
+                        newStockImagePreview.src = newStockSelectedImage;
+                        newStockPreviewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            newStockRemovePreview.addEventListener('click', () => {
+                newStockSelectedImage = null;
+                newStockImageFile.value = '';
+                newStockPreviewContainer.style.display = 'none';
+            });
+
+            // Collection File Upload
+            collectionUploadArea.addEventListener('click', () => {
+                collectionImageFile.click();
+            });
+
+            collectionImageFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB limit)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert(errorAlert, 'File size must be less than 5MB');
+                        return;
+                    }
+                    
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        showAlert(errorAlert, 'Please select an image file');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        collectionSelectedImage = e.target.result;
+                        collectionImagePreview.src = collectionSelectedImage;
+                        collectionPreviewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            collectionRemovePreview.addEventListener('click', () => {
+                collectionSelectedImage = null;
+                collectionImageFile.value = '';
+                collectionPreviewContainer.style.display = 'none';
+            });
         }
 
         // Load user information from Firebase
@@ -961,6 +1741,7 @@
                 // Check if user is authenticated
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
+                        currentUser = user;
                         // Get user data from Realtime Database
                         const userRef = ref(rtdb, 'users/' + user.uid);
                         const snapshot = await get(userRef);
@@ -968,6 +1749,12 @@
                         if (snapshot.exists()) {
                             const userData = snapshot.val();
                             loggedInUsername.textContent = userData.username || 'Admin User';
+                            
+                            // Load profile picture if exists
+                            if (userData.profilePicture) {
+                                userProfilePic.src = userData.profilePicture;
+                                profilePicturePreview.src = userData.profilePicture;
+                            }
                         } else {
                             // Fallback to displayName from auth if no data in RTDB
                             loggedInUsername.textContent = user.displayName || 'Admin User';
@@ -997,20 +1784,41 @@
 
         // Setup modal events
         function setupModalEvents() {
-            // Close modal when X is clicked
+            // Close edit modal when X is clicked
             closeEditModal.addEventListener('click', () => {
                 editProductModal.style.display = 'none';
             });
 
-            // Close modal when cancel button is clicked
+            // Close edit modal when cancel button is clicked
             cancelEdit.addEventListener('click', () => {
                 editProductModal.style.display = 'none';
             });
 
-            // Close modal when clicking outside the modal content
+            // Close profile modal when X is clicked
+            closeProfileModal.addEventListener('click', () => {
+                profilePictureModal.style.display = 'none';
+            });
+
+            // Close profile modal when cancel button is clicked
+            cancelProfile.addEventListener('click', () => {
+                profilePictureModal.style.display = 'none';
+            });
+
+            // Close settings modal when X is clicked
+            closeSettingsModal.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+            });
+
+            // Close modals when clicking outside the modal content
             window.addEventListener('click', (e) => {
                 if (e.target === editProductModal) {
                     editProductModal.style.display = 'none';
+                }
+                if (e.target === profilePictureModal) {
+                    profilePictureModal.style.display = 'none';
+                }
+                if (e.target === settingsModal) {
+                    settingsModal.style.display = 'none';
                 }
             });
 
@@ -1054,6 +1862,127 @@
                     showAlert(errorAlert, 'Error updating product. Please try again.');
                 }
             });
+
+            // Profile picture upload area click
+            profileUploadArea.addEventListener('click', () => {
+                profilePictureInput.click();
+            });
+
+            // Profile picture file selection
+            profilePictureInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // Check file size (5MB limit)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert(errorAlert, 'File size must be less than 5MB');
+                        return;
+                    }
+                    
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        showAlert(errorAlert, 'Please select an image file');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        selectedProfilePicture = e.target.result;
+                        profilePicturePreview.src = selectedProfilePicture;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Save profile picture
+            saveProfilePicture.addEventListener('click', async () => {
+                if (!selectedProfilePicture) {
+                    showAlert(errorAlert, 'Please select a profile picture');
+                    return;
+                }
+                
+                try {
+                    // In a real app, you would upload to Firebase Storage
+                    // For this demo, we'll store the base64 string in Realtime Database
+                    if (currentUser) {
+                        await update(ref(rtdb, 'users/' + currentUser.uid), {
+                            profilePicture: selectedProfilePicture
+                        });
+                        
+                        userProfilePic.src = selectedProfilePicture;
+                        showAlert(successAlert, 'Profile picture updated successfully!');
+                        profilePictureModal.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error("Error updating profile picture:", error);
+                    showAlert(errorAlert, 'Error updating profile picture. Please try again.');
+                }
+            });
+
+            // Save settings
+            saveSettingsBtn.addEventListener('click', async () => {
+                const settings = {
+                    emailNotifications: document.getElementById('email-notifications').checked,
+                    autoStockUpdate: document.getElementById('auto-stock-update').checked,
+                    lowStockAlerts: document.getElementById('low-stock-alerts').checked,
+                    taxRate: parseFloat(document.getElementById('tax-rate').value),
+                    currency: document.getElementById('currency').value,
+                    twoFactorAuth: document.getElementById('two-factor-auth').checked,
+                    sessionTimeout: parseInt(document.getElementById('session-timeout').value)
+                };
+
+                try {
+                    if (currentUser) {
+                        await update(ref(rtdb, 'users/' + currentUser.uid + '/settings'), settings);
+                        showAlert(successAlert, 'Settings saved successfully!');
+                        settingsModal.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error("Error saving settings:", error);
+                    showAlert(errorAlert, 'Error saving settings. Please try again.');
+                }
+            });
+
+            // Reset settings
+            resetSettingsBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset all settings to default values?')) {
+                    resetSettingsToDefault();
+                    showAlert(successAlert, 'Settings reset to default values!');
+                }
+            });
+        }
+
+        // Load settings from Firebase
+        async function loadSettings() {
+            try {
+                if (currentUser) {
+                    const settingsRef = ref(rtdb, 'users/' + currentUser.uid + '/settings');
+                    const snapshot = await get(settingsRef);
+                    
+                    if (snapshot.exists()) {
+                        const settings = snapshot.val();
+                        document.getElementById('email-notifications').checked = settings.emailNotifications || false;
+                        document.getElementById('auto-stock-update').checked = settings.autoStockUpdate || false;
+                        document.getElementById('low-stock-alerts').checked = settings.lowStockAlerts || false;
+                        document.getElementById('tax-rate').value = settings.taxRate || 16;
+                        document.getElementById('currency').value = settings.currency || 'KES';
+                        document.getElementById('two-factor-auth').checked = settings.twoFactorAuth || false;
+                        document.getElementById('session-timeout').value = settings.sessionTimeout || 30;
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading settings:", error);
+            }
+        }
+
+        // Reset settings to default values
+        function resetSettingsToDefault() {
+            document.getElementById('email-notifications').checked = true;
+            document.getElementById('auto-stock-update').checked = true;
+            document.getElementById('low-stock-alerts').checked = true;
+            document.getElementById('tax-rate').value = 16;
+            document.getElementById('currency').value = 'KES';
+            document.getElementById('two-factor-auth').checked = false;
+            document.getElementById('session-timeout').value = 30;
         }
 
         // Load products from Firebase
@@ -1273,8 +2202,15 @@
                 const category = document.getElementById('new-stock-category').value;
                 const stock = parseInt(document.getElementById('new-stock-stock').value);
                 const description = document.getElementById('new-stock-description').value;
-                const image = document.getElementById('new-stock-image').value;
                 const featured = document.getElementById('new-stock-featured').checked;
+                
+                // Determine image source
+                let image = '';
+                if (newStockUrlToggle.classList.contains('active')) {
+                    image = document.getElementById('new-stock-image').value;
+                } else {
+                    image = newStockSelectedImage;
+                }
                 
                 if (!name || !price || !category || !stock || !description || !image) {
                     showAlert(errorAlert, 'Please fill in all required fields.');
@@ -1299,6 +2235,10 @@
                     newStockForm.reset();
                     // Reset image URL to default
                     document.getElementById('new-stock-image').value = 'https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+                    // Reset file upload
+                    newStockSelectedImage = null;
+                    newStockImageFile.value = '';
+                    newStockPreviewContainer.style.display = 'none';
                     loadProducts();
                 } else {
                     showAlert(errorAlert, 'Error saving product. Please try again.');
@@ -1314,8 +2254,15 @@
                 const category = document.getElementById('collection-product-category').value;
                 const stock = parseInt(document.getElementById('collection-product-stock').value);
                 const description = document.getElementById('collection-product-description').value;
-                const image = document.getElementById('collection-product-image').value;
                 const featured = document.getElementById('collection-product-featured').checked;
+                
+                // Determine image source
+                let image = '';
+                if (collectionUrlToggle.classList.contains('active')) {
+                    image = document.getElementById('collection-product-image').value;
+                } else {
+                    image = collectionSelectedImage;
+                }
                 
                 if (!name || !price || !category || !stock || !description || !image) {
                     showAlert(errorAlert, 'Please fill in all required fields.');
@@ -1340,6 +2287,10 @@
                     collectionProductForm.reset();
                     // Reset image URL to default
                     document.getElementById('collection-product-image').value = 'https://images.unsplash.com/photo-1590736969955-1d0c97beb2b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
+                    // Reset file upload
+                    collectionSelectedImage = null;
+                    collectionImageFile.value = '';
+                    collectionPreviewContainer.style.display = 'none';
                     loadProducts();
                 } else {
                     showAlert(errorAlert, 'Error saving product. Please try again.');
@@ -1366,6 +2317,46 @@
             // Open Counter button
             openCounterBtn.addEventListener('click', () => {
                 window.location.href = 'shopsell.html';
+            });
+
+            // Logout button
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to log out?')) {
+                    try {
+                        await signOut(auth);
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error("Error signing out:", error);
+                        showAlert(errorAlert, 'Error signing out. Please try again.');
+                    }
+                }
+            });
+
+            // Change profile picture button
+            changeProfilePic.addEventListener('click', (e) => {
+                e.preventDefault();
+                profilePictureModal.style.display = 'flex';
+            });
+
+            // User settings button
+            userSettingsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                settingsModal.style.display = 'flex';
+                
+                // Close dropdown
+                userDropdown.classList.remove('active');
+            });
+
+            // User dropdown toggle
+            userDropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                userDropdown.classList.remove('active');
             });
         }
 
