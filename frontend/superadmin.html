@@ -120,51 +120,28 @@
             color: var(--primary);
         }
 
-        .user-info {
+        .header-left {
             display: flex;
             align-items: center;
-            position: relative;
+            gap: 1rem;
         }
 
-        .user-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 0.8rem;
-        }
-
-        .user-dropdown {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .user-dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: white;
-            min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        .logout-btn {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
             border-radius: 4px;
-            z-index: 1000;
-            margin-top: 0.5rem;
-        }
-
-        .user-dropdown-content a {
-            color: #333;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             transition: background-color 0.3s;
         }
 
-        .user-dropdown-content a:hover {
-            background-color: #f5f5f5;
-        }
-
-        .user-dropdown:hover .user-dropdown-content {
-            display: block;
+        .logout-btn:hover {
+            background-color: #c0392b;
         }
 
         /* Tabs */
@@ -394,7 +371,6 @@
         .toggle-container {
             display: flex;
             align-items: center;
-            margin-right: 1rem;
         }
 
         .toggle-btn {
@@ -722,12 +698,11 @@
                 align-items: flex-start;
             }
 
-            .user-info {
+            .logout-btn {
                 margin-top: 1rem;
             }
 
             .toggle-container {
-                margin-right: 0;
                 margin-bottom: 1rem;
             }
         }
@@ -801,7 +776,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="dashboard-header">
-                <div>
+                <div class="header-left">
                     <h1>F3 Shop Dashboard</h1>
                     <div class="toggle-container">
                         <button class="toggle-btn" id="dashboardToggle">
@@ -809,21 +784,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="user-info">
-                    <div class="user-dropdown">
-                        <div style="display: flex; align-items: center;">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
-                            <div>
-                                <p>Admin User</p>
-                                <small>Administrator</small>
-                            </div>
-                            <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem;"></i>
-                        </div>
-                        <div class="user-dropdown-content">
-                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-                        </div>
-                    </div>
-                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </button>
             </div>
 
             <!-- Reset Notification -->
@@ -1007,6 +970,23 @@
             <div class="tab-content" id="sellers">
                 <div class="card">
                     <h2>Seller Performance</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sellerReportDateFrom">From Date</label>
+                            <input type="date" id="sellerReportDateFrom" class="form-control" value="<?php echo date('Y-m-d', strtotime('-7 days')); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="sellerReportDateTo">To Date</label>
+                            <input type="date" id="sellerReportDateTo" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-info" id="generateSellerReportBtn">
+                                <i class="fas fa-chart-line"></i> Generate Seller Report
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-value" id="abiolaSales">0</div>
@@ -1083,7 +1063,7 @@
         <!-- Store Dashboard -->
         <div class="store-dashboard" id="storeDashboard">
             <div class="store-header">
-                <div>
+                <div class="header-left">
                     <h1>Online Store Dashboard</h1>
                     <div class="toggle-container">
                         <button class="toggle-btn" id="storeDashboardToggle">
@@ -1091,21 +1071,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="user-info">
-                    <div class="user-dropdown">
-                        <div style="display: flex; align-items: center;">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Admin User">
-                            <div>
-                                <p>Admin User</p>
-                                <small>Store Manager</small>
-                            </div>
-                            <i class="fas fa-chevron-down" style="margin-left: 0.5rem; font-size: 0.8rem;"></i>
-                        </div>
-                        <div class="user-dropdown-content">
-                            <a href="#" id="storeLogoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-                        </div>
-                    </div>
-                </div>
+                <button class="logout-btn" id="storeLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </button>
             </div>
 
             <!-- Store Stats -->
@@ -1211,6 +1179,7 @@
         const errorAlert = document.getElementById('error-alert');
         const generateReportBtn = document.getElementById('generateReportBtn');
         const exportReportBtn = document.getElementById('exportReportBtn');
+        const generateSellerReportBtn = document.getElementById('generateSellerReportBtn');
         const dashboardToggle = document.getElementById('dashboardToggle');
         const storeDashboardToggle = document.getElementById('storeDashboardToggle');
         const mainContent = document.querySelector('.main-content');
@@ -1243,6 +1212,7 @@
         let currentPeriodSales = []; // For dashboard - only current period data
         let monthlyTopSellerData = {}; // Store monthly top seller data
         let allUsers = []; // Store all users for management
+        let filteredSalesForSellerReport = []; // Store filtered sales for seller performance
 
         // Reset timer variables
         let resetInterval;
@@ -1263,9 +1233,12 @@
             
             document.getElementById('reportDateFrom').value = lastWeek.toISOString().slice(0, 10);
             document.getElementById('reportDateTo').value = today.toISOString().slice(0, 10);
+            document.getElementById('sellerReportDateFrom').value = lastWeek.toISOString().slice(0, 10);
+            document.getElementById('sellerReportDateTo').value = today.toISOString().slice(0, 10);
             
-            // Generate initial sales report
+            // Generate initial reports
             generateSalesReport(lastWeek.toISOString().slice(0, 10), today.toISOString().slice(0, 10));
+            generateSellerPerformanceReport(lastWeek.toISOString().slice(0, 10), today.toISOString().slice(0, 10));
             
             // Load users initially
             loadUsers();
@@ -1397,6 +1370,13 @@
                     if (fromDate && toDate) {
                         generateSalesReport(fromDate, toDate);
                     }
+
+                    // Update seller performance with new data
+                    const sellerFromDate = document.getElementById('sellerReportDateFrom').value;
+                    const sellerToDate = document.getElementById('sellerReportDateTo').value;
+                    if (sellerFromDate && sellerToDate) {
+                        generateSellerPerformanceReport(sellerFromDate, sellerToDate);
+                    }
                 });
 
                 // Products listener
@@ -1487,7 +1467,6 @@
             updateCharts();
             updateRecentSales();
             updateProductPerformance();
-            updateSellerPerformance();
         }
 
         // Update store dashboard
@@ -1618,8 +1597,6 @@
             updateProductBarChart();
             updateTopProductsChart();
             updateCategoryChart();
-            updateSellerRevenueChart();
-            updateSellerSalesChart();
         }
 
         // Revenue timeline chart (current period only)
@@ -1887,84 +1864,6 @@
             }
         }
 
-        // Seller revenue chart (current period only)
-        function updateSellerRevenueChart() {
-            const sellerRevenue = {};
-            currentPeriodSales.forEach(sale => {
-                sellerRevenue[sale.seller] = (sellerRevenue[sale.seller] || 0) + sale.price;
-            });
-            
-            const labels = Object.keys(sellerRevenue);
-            const values = labels.map(label => sellerRevenue[label]);
-
-            const ctx = document.getElementById('sellerRevenueChart').getContext('2d');
-            
-            if (sellerRevenueChart) {
-                sellerRevenueChart.data.labels = labels;
-                sellerRevenueChart.data.datasets[0].data = values;
-                sellerRevenueChart.update();
-            } else {
-                sellerRevenueChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Revenue',
-                            data: values,
-                            backgroundColor: '#3498db'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // Seller sales chart (current period only)
-        function updateSellerSalesChart() {
-            const sellerCounts = {};
-            currentPeriodSales.forEach(sale => {
-                sellerCounts[sale.seller] = (sellerCounts[sale.seller] || 0) + 1;
-            });
-            
-            const labels = Object.keys(sellerCounts);
-            const values = labels.map(label => sellerCounts[label]);
-
-            const ctx = document.getElementById('sellerSalesChart').getContext('2d');
-            
-            if (sellerSalesChart) {
-                sellerSalesChart.data.labels = labels;
-                sellerSalesChart.data.datasets[0].data = values;
-                sellerSalesChart.update();
-            } else {
-                sellerSalesChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Sales Count',
-                            data: values,
-                            backgroundColor: '#f39c12'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
         // Update recent sales table (current period only)
         function updateRecentSales() {
             const recentSalesBody = document.getElementById('recentSalesBody');
@@ -2052,13 +1951,59 @@
             }).join('');
         }
 
-        // Update seller performance table and stats (current period only)
+        // Generate sales report (uses all historical data)
+        function generateSalesReport(fromDate, toDate) {
+            const salesReportBody = document.getElementById('salesReportBody');
+            
+            const filteredSales = sales.filter(sale => {
+                const saleDate = sale.dateKey || (sale.createdAtObj ? sale.createdAtObj.toISOString().slice(0,10) : '');
+                return saleDate >= fromDate && saleDate <= toDate;
+            });
+            
+            if (filteredSales.length === 0) {
+                salesReportBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No sales found for the selected date range</td></tr>';
+                return;
+            }
+            
+            salesReportBody.innerHTML = filteredSales.map(sale => {
+                // Find product category
+                const product = products.find(p => p.id === sale.productId);
+                const category = product ? product.category : (sale.category || 'Unknown');
+                
+                return `
+                    <tr>
+                        <td>${sale.createdAtStr || sale.date || ''}</td>
+                        <td>${sale.productName}</td>
+                        <td>${formatCurrency(sale.price)}</td>
+                        <td>${sale.seller}</td>
+                        <td>${category}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            showAlert(successAlert, `Report generated for ${fromDate} to ${toDate}. Found ${filteredSales.length} sales.`);
+        }
+
+        // Generate seller performance report based on date range
+        function generateSellerPerformanceReport(fromDate, toDate) {
+            filteredSalesForSellerReport = sales.filter(sale => {
+                const saleDate = sale.dateKey || (sale.createdAtObj ? sale.createdAtObj.toISOString().slice(0,10) : '');
+                return saleDate >= fromDate && saleDate <= toDate;
+            });
+            
+            updateSellerPerformance();
+            updateSellerCharts();
+            
+            showAlert(successAlert, `Seller performance report generated for ${fromDate} to ${toDate}. Found ${filteredSalesForSellerReport.length} sales.`);
+        }
+
+        // Update seller performance table and stats (based on filtered sales)
         function updateSellerPerformance() {
             const sellerPerformanceBody = document.getElementById('sellerPerformanceBody');
             
-            // Calculate seller performance (current period only)
+            // Calculate seller performance (based on filtered sales)
             const sellerStats = {};
-            currentPeriodSales.forEach(sale => {
+            filteredSalesForSellerReport.forEach(sale => {
                 if (!sellerStats[sale.seller]) {
                     sellerStats[sale.seller] = {
                         name: sale.seller,
@@ -2074,7 +2019,7 @@
             const sellerStatsArray = Object.values(sellerStats);
             
             if (sellerStatsArray.length === 0) {
-                sellerPerformanceBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No seller data available</td></tr>';
+                sellerPerformanceBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No seller data available for selected period</td></tr>';
                 return;
             }
             
@@ -2104,12 +2049,96 @@
                 `;
             }).join('');
             
-            // Update individual seller stats (current period only)
+            // Update individual seller stats (based on filtered sales)
             const sellers = ['Abiola', 'Debby', 'Nicannor', 'Rita'];
             sellers.forEach(seller => {
                 const sellerData = sellerStats[seller] || { totalSales: 0 };
                 document.getElementById(`${seller.toLowerCase()}Sales`).textContent = sellerData.totalSales;
             });
+        }
+
+        // Update seller charts based on filtered sales
+        function updateSellerCharts() {
+            updateSellerRevenueChart();
+            updateSellerSalesChart();
+        }
+
+        // Seller revenue chart (based on filtered sales)
+        function updateSellerRevenueChart() {
+            const sellerRevenue = {};
+            filteredSalesForSellerReport.forEach(sale => {
+                sellerRevenue[sale.seller] = (sellerRevenue[sale.seller] || 0) + sale.price;
+            });
+            
+            const labels = Object.keys(sellerRevenue);
+            const values = labels.map(label => sellerRevenue[label]);
+
+            const ctx = document.getElementById('sellerRevenueChart').getContext('2d');
+            
+            if (sellerRevenueChart) {
+                sellerRevenueChart.data.labels = labels;
+                sellerRevenueChart.data.datasets[0].data = values;
+                sellerRevenueChart.update();
+            } else {
+                sellerRevenueChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Revenue',
+                            data: values,
+                            backgroundColor: '#3498db'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Seller sales chart (based on filtered sales)
+        function updateSellerSalesChart() {
+            const sellerCounts = {};
+            filteredSalesForSellerReport.forEach(sale => {
+                sellerCounts[sale.seller] = (sellerCounts[sale.seller] || 0) + 1;
+            });
+            
+            const labels = Object.keys(sellerCounts);
+            const values = labels.map(label => sellerCounts[label]);
+
+            const ctx = document.getElementById('sellerSalesChart').getContext('2d');
+            
+            if (sellerSalesChart) {
+                sellerSalesChart.data.labels = labels;
+                sellerSalesChart.data.datasets[0].data = values;
+                sellerSalesChart.update();
+            } else {
+                sellerSalesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Sales Count',
+                            data: values,
+                            backgroundColor: '#f39c12'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         // Format currency
@@ -2140,6 +2169,19 @@
                 }
                 
                 generateSalesReport(fromDate, toDate);
+            });
+
+            // Generate seller report button
+            generateSellerReportBtn.addEventListener('click', () => {
+                const fromDate = document.getElementById('sellerReportDateFrom').value;
+                const toDate = document.getElementById('sellerReportDateTo').value;
+                
+                if (!fromDate || !toDate) {
+                    showAlert(errorAlert, 'Please select both from and to dates.');
+                    return;
+                }
+                
+                generateSellerPerformanceReport(fromDate, toDate);
             });
 
             // Export report button
@@ -2177,7 +2219,11 @@
                 if (resetInterval) clearInterval(resetInterval);
                 if (window.resetCountdownInterval) clearInterval(window.resetCountdownInterval);
                 
-                // Redirect to login page or handle logout logic
+                // Clear stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login page
                 window.location.href = 'login.html';
             }
         }
@@ -2198,39 +2244,6 @@
                 dashboardToggle.innerHTML = '<i class="fas fa-chart-bar"></i> Switch to Admin Dashboard';
                 updateStoreDashboard();
             }
-        }
-
-        // Generate sales report (uses all historical data)
-        function generateSalesReport(fromDate, toDate) {
-            const salesReportBody = document.getElementById('salesReportBody');
-            
-            const filteredSales = sales.filter(sale => {
-                const saleDate = sale.dateKey || (sale.createdAtObj ? sale.createdAtObj.toISOString().slice(0,10) : '');
-                return saleDate >= fromDate && saleDate <= toDate;
-            });
-            
-            if (filteredSales.length === 0) {
-                salesReportBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No sales found for the selected date range</td></tr>';
-                return;
-            }
-            
-            salesReportBody.innerHTML = filteredSales.map(sale => {
-                // Find product category
-                const product = products.find(p => p.id === sale.productId);
-                const category = product ? product.category : (sale.category || 'Unknown');
-                
-                return `
-                    <tr>
-                        <td>${sale.createdAtStr || sale.date || ''}</td>
-                        <td>${sale.productName}</td>
-                        <td>${formatCurrency(sale.price)}</td>
-                        <td>${sale.seller}</td>
-                        <td>${category}</td>
-                    </tr>
-                `;
-            }).join('');
-            
-            showAlert(successAlert, `Report generated for ${fromDate} to ${toDate}. Found ${filteredSales.length} sales.`);
         }
 
         // Export sales report to CSV (uses all historical data)
@@ -2540,4 +2553,4 @@
         });
     </script>
 </body>
-</html> 
+</html>

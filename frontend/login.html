@@ -579,6 +579,18 @@
                 border-color: #555;
             }
         }
+        
+        /* New styles for admin email field */
+        .admin-email-field {
+            background-color: #f0f8ff;
+            border: 2px solid #27ae60;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .admin-email-field:read-only {
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -658,7 +670,7 @@
                         <input type="hidden" id="signup-pin">
                     </div>
 
-                    <button class="btn btn-primary" id="signup-btn">Send OTP to Admin</button>
+                    <button class="btn btn-primary" id="signup-btn">Send OTP to Email</button>
                 </div>
 
                 <!-- OTP VERIFY -->
@@ -688,7 +700,7 @@
                     <button class="btn btn-secondary" id="back-btn">Back to Sign Up</button>
 
                     <div class="resend-otp">
-                        <a href="#" id="resend-otp-link">Resend OTP to Admin</a>
+                        <a href="#" id="resend-otp-link">Resend OTP to Email</a>
                     </div>
                 </div>
 
@@ -761,7 +773,7 @@
         console.log("Firebase initialized successfully");
     </script>
 
-    <!-- MAIN SCRIPT (keeps your UI + fixed logic) -->
+    <!-- MAIN SCRIPT  -->
     <script>
         (function () {
             // -----------------------
@@ -863,18 +875,49 @@
             }
 
             // -----------------------
+            // UPDATED: Admin email restriction function for BOTH login and signup
+            // -----------------------
+            function updateEmailFieldForRole() {
+                if (currentRole === 'admin') {
+                    // For admin role, auto-populate and lock the email field in BOTH forms
+                    signupEmailEl.value = 'onestopshopsystem@gmail.com';
+                    signupEmailEl.readOnly = true;
+                    signupEmailEl.classList.add('admin-email-field');
+                    signupEmailEl.placeholder = 'Admin email (auto-filled)';
+                    
+                    loginEmailEl.value = 'onestopshopsystem@gmail.com';
+                    loginEmailEl.readOnly = true;
+                    loginEmailEl.classList.add('admin-email-field');
+                    loginEmailEl.placeholder = 'Admin email (auto-filled)';
+                } else {
+                    // For merchant role, allow any email in BOTH forms
+                    signupEmailEl.value = '';
+                    signupEmailEl.readOnly = false;
+                    signupEmailEl.classList.remove('admin-email-field');
+                    signupEmailEl.placeholder = 'Enter your email';
+                    
+                    loginEmailEl.value = '';
+                    loginEmailEl.readOnly = false;
+                    loginEmailEl.classList.remove('admin-email-field');
+                    loginEmailEl.placeholder = 'Enter your email';
+                }
+            }
+
+            // -----------------------
             // Role selection & toggles
             // -----------------------
             merchantBtn.addEventListener('click', () => {
                 merchantBtn.classList.add('active');
                 adminBtn.classList.remove('active');
                 currentRole = 'merchant';
+                updateEmailFieldForRole(); // UPDATED: Update email field in both forms
                 clearAllMessages();
             });
             adminBtn.addEventListener('click', () => {
                 adminBtn.classList.add('active');
                 merchantBtn.classList.remove('active');
                 currentRole = 'admin';
+                updateEmailFieldForRole(); // UPDATED: Update email field in both forms
                 clearAllMessages();
             });
 
@@ -885,6 +928,7 @@
                 signupForm.classList.remove('active');
                 otpSection.classList.remove('active');
                 forgotPasswordForm.classList.remove('active');
+                updateEmailFieldForRole(); // UPDATED: Update email field when switching to login
                 clearAllMessages();
             });
             signupToggle.addEventListener('click', () => {
@@ -894,6 +938,7 @@
                 loginForm.classList.remove('active');
                 otpSection.classList.remove('active');
                 forgotPasswordForm.classList.remove('active');
+                updateEmailFieldForRole(); // UPDATED: Update email field when switching to signup
                 clearAllMessages();
             });
 
@@ -927,6 +972,12 @@
                 const email = (signupEmailEl.value || '').trim();
                 const username = (signupUsernameEl.value || '').trim();
                 const pin = (signupPinField.value || '').trim();
+
+                // NEW: Admin email validation
+                if (currentRole === 'admin' && email !== 'onestopshopsystem@gmail.com') {
+                    showMessage(signupMessage, 'Only onestopshopsystem@gmail.com can create admin accounts', 'error');
+                    return;
+                }
 
                 if (!email) {
                     showMessage(signupMessage, 'Please enter your email', 'error');
@@ -1102,20 +1153,15 @@
                         }
                     );
 
-                    showMessage(otpMessage, '✅ Account created successfully! Redirecting to login...', 'success');
+                    showMessage(otpMessage, '✅ Account created successfully! Redirecting to admin panel...', 'success');
 
+                    // NEW: Automatically redirect after account creation
                     setTimeout(() => {
-                        // clear forms & show login
-                        otpSection.classList.remove('active');
-                        loginForm.classList.add('active');
-                        loginToggle.classList.add('active');
-                        signupToggle.classList.remove('active');
-                        // clear inputs
-                        signupEmailEl.value = '';
-                        signupUsernameEl.value = '';
-                        document.querySelectorAll('#signup-pin-inputs .pin-digit').forEach(i => i.value = '');
-                        document.querySelectorAll('#otp-inputs .otp-digit').forEach(i => i.value = '');
-                        otpField.value = '';
+                        if (currentRole === 'admin') {
+                            window.location.href = 'superadmin.html';
+                        } else {
+                            window.location.href = 'admin.html';
+                        }
                     }, 1200);
 
                 } catch (err) {
@@ -1221,9 +1267,10 @@
                 }
             });
 
-            // On load debug
+            // NEW: Initialize email field state on page load
             document.addEventListener('DOMContentLoaded', () => {
-                console.log('UI ready - EmailJS + Firebase (Realtime DB) active. Users can now enter their own email addresses.');
+                updateEmailFieldForRole();
+                console.log('UI ready - EmailJS + Firebase (Realtime DB) active. Admin signups restricted to onestopshopsystem@gmail.com');
             });
 
         })();
